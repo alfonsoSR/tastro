@@ -9,6 +9,7 @@ code/residuals
 code/closed-loop/*.txt
 doc
 *.yaml
+build
 
 # Python
 *cache*
