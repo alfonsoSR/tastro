@@ -1,12 +1,12 @@
-from tastro.io.command_line.plotters import DEFAULT_CANVAS_SIZE
+from tastro.cli.parsers.plotters import DEFAULT_CANVAS_SIZE
 from .core import AnalysisManager, ComparisonManager, VisualizationManager
-from ...io.command_line.plotters import PlotterInput
+from ...cli.parsers.plotters import PlotterInput
 from pathlib import Path
 from ...io import EstimationResults
 import yaml
 from nastro import graphics as ng
 import numpy as np
-from ...io.command_line import (
+from ...cli.parsers import (
     ResultComparisonInput,
     ResultVisualizationInput,
     ParameterDistributionInput,

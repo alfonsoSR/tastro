@@ -1,4 +1,4 @@
-from ...io.command_line.core import CLInputFigure
+from ...cli.parsers.core import CLInputFigure
 from ..core import AnalysisFigureManagerBase
 import typing
 from ...io import PropagationOutput

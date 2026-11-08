@@ -1,5 +1,5 @@
 from ..core import AnalysisFigureManagerBase
-from ...io.command_line.core import CLInputFigure
+from ...cli.parsers.core import CLInputFigure
 from ...logging import log
 from ...io import PropagationOutput
 from ...config import CaseSetup

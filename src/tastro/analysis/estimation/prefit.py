@@ -1,5 +1,5 @@
 from ...io import PrefitResults
-from ...io.command_line.core import CLInputFigure
+from ...cli.parsers.core import CLInputFigure
 from ..core import AnalysisFigureManagerBase
 from nastro import graphics as ng
 from pathlib import Path

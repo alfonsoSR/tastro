@@ -1,5 +1,5 @@
 from .integrator_analysis import FixedIntegratorAnalysisManager
-from ...io.command_line.core import CLParserFigure
+from ...cli.parsers.core import CLParserFigure
 
 
 def compare_fixed_step_integrators_cli() -> None:

@@ -1,6 +1,6 @@
 from .residual_ephemerides import EphemeridesResidualManager
-from ...io.command_line.core import CLParserFigure
-from ...io.command_line.comparison import CLParserComparison
+from ...cli.parsers.core import CLParserFigure
+from ...cli.parsers.comparison import CLParserComparison
 from .propagation_comparison import compare_propagation_results
 
 

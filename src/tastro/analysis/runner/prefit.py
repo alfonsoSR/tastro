@@ -1,5 +1,5 @@
 from ..core import AnalysisManagerBase
-from ...io.command_line.core import CommandLineInput
+from ...cli.parsers.core import CommandLineInput
 from ...io import PrefitResults
 from ...config import CaseSetup
 from ...environment import system_of_bodies_from_config

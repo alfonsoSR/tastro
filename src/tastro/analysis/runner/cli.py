@@ -1,5 +1,5 @@
-from ...io.command_line.runner import CommandLineParserRunner
-from ...io.command_line.core import CLParser
+from ...cli.parsers.runner import CommandLineParserRunner
+from ...cli.parsers.core import CLParser
 from .main import SimulationManager
 from .prefit import PrefitManager
 

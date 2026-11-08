@@ -1,6 +1,6 @@
 from .cartesian_residuals import show_cartesian_residuals
 from .doppler_residuals import show_doppler_residuals
-from ...io.command_line.core import CLParserFigure, CLParser
+from ...cli.parsers.core import CLParserFigure, CLParser
 from .prefit import show_doppler_prefit_residuals
 from .doppler_residuals import (
     ResidualHistoryManager,

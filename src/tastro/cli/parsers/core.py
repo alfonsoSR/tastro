@@ -24,10 +24,10 @@ class CommandLineParser[T: CommandLineInput](
 
     namespace: Type[T]
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs: Any) -> None:
 
         # Initialize with constructor of base class
-        super().__init__()
+        super().__init__(**kwargs)
 
         # Add common argument to all command line parsers
         self.add_argument(
@@ -105,9 +105,9 @@ class CLInputFigure(CommandLineInput):
 
 class CLParserFigureBase[T: CLInputFigure](CommandLineParser[T]):
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs: Any) -> None:
 
-        super().__init__()
+        super().__init__(**kwargs)
 
         self.figures_group = self.add_argument_group("Figure processing")
         self.figures_group.add_argument(

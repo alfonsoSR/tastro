@@ -23,9 +23,9 @@ class CommandLineParserRunner(CommandLineParser[CommandLineInputRunner]):
 
     namespace = CommandLineInputRunner
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs: typing.Any) -> None:
 
-        super().__init__()
+        super().__init__(**kwargs)
 
         self.add_argument(
             "-p",

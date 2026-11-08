@@ -1,5 +1,5 @@
 from ..logging import log
-from ..io.command_line.core import CommandLineInput, CLInputFigure
+from ..cli.parsers.core import CommandLineInput, CLInputFigure
 from .utils import get_propagation_start_epoch_from_config
 from ..config import CaseSetup
 from tudatpy.astro import time_representation as ttime

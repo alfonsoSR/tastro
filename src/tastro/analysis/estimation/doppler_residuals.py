@@ -1,4 +1,4 @@
-from ...io.command_line.core import (
+from ...cli.parsers.core import (
     CLInputFigure,
     CLParserFigure,
     CommandLineInput,

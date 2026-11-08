@@ -1,5 +1,5 @@
 from ..core import AnalysisFigureManagerBase
-from ...io.command_line.comparison import CLInputFigure
+from ...cli.parsers.comparison import CLInputFigure
 from ...io import EstimationResults
 from pathlib import Path
 from nastro import graphics as ng, types as nt

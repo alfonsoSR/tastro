@@ -1,4 +1,4 @@
-from ...io.command_line.core import CLInputFigure, CommandLineInput
+from ...cli.parsers.core import CLInputFigure, CommandLineInput
 from ..core import AnalysisFigureManagerBase
 from ...io import EstimationResults, PrefitResults
 from pathlib import Path

@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 from nastro import graphics as ng, types as nt
 import numpy as np
-from ...io.command_line import ResultVisualizationInput, ResultComparisonInput
+from ...cli.parsers.plotters import (
+    StateResidualVisualizationInput,
+    StateResidualComparisonInput,
+)
 from .core import AnalysisManager
 from pathlib import Path
 from ...io import PropagationOutput, EstimationResults
@@ -14,7 +17,6 @@ from tudatpy.astro import (
 from ...logging import log
 import traceback
 from tudatpy.interface import spice
-from tudatpy.math import interpolators as tinterp
 
 
 class AnalysisType(enum.IntEnum):
@@ -175,22 +177,6 @@ def update_figure[T: ng.BaseFigure](
     )
 
     return fig
-
-
-class StateResidualVisualizationInput(ResultVisualizationInput):
-
-    reference_frame: str
-    target_state: str
-    reference_state: str
-    formal_errors: bool = False
-    show_variability: bool = True
-
-
-class StateResidualComparisonInput(ResultComparisonInput):
-
-    reference_frame: str
-    target_state: str
-    reference_state: str
 
 
 class StateResidualVisualizationManager(

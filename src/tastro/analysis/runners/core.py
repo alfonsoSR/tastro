@@ -1,4 +1,4 @@
-from ...io.command_line import CommandLineInput
+from ...cli.parsers import CommandLineInput
 from pathlib import Path
 from ...config import CaseSetup
 from tudatpy.interface import spice

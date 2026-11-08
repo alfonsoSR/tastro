@@ -17,9 +17,9 @@ class CLParserComparison(CLParserFigureBase[CLInputComparison]):
 
     namespace = CLInputComparison
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs: Any) -> None:
 
-        super().__init__()
+        super().__init__(**kwargs)
 
         self.add_argument(
             "-r",
@@ -63,9 +63,9 @@ class CLParserGeneralComparison(CLParserFigureBase[CLInputGeneralComparison]):
 
     namespace = CLInputGeneralComparison
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs: Any) -> None:
 
-        super().__init__()
+        super().__init__(**kwargs)
 
         self.add_argument(
             "-r",

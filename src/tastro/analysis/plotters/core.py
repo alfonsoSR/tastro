@@ -1,5 +1,5 @@
-from ...io.command_line import ResultComparisonInput, ResultVisualizationInput
-from ...io.command_line.plotters import DEFAULT_CANVAS_SIZE, PlotterInput
+from ...cli.parsers import ResultComparisonInput, ResultVisualizationInput
+from ...cli.parsers.plotters import DEFAULT_CANVAS_SIZE, PlotterInput
 from pathlib import Path
 from ..utils import get_propagaton_start_epoch_from_config_file
 from tudatpy.astro import time_representation as ttime

@@ -1,4 +1,4 @@
-from ...io.command_line.core import CLInputFigure, CLParserFigure
+from ...cli.parsers.core import CLInputFigure, CLParserFigure
 from ..core import AnalysisFigureManagerBase
 from ...io import EstimationResults, PropagationOutput
 from nastro import types as nt, graphics as ng

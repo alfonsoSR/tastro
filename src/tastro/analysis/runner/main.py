@@ -5,7 +5,7 @@ from tastro import (
     propagation as nprop,
     estimation as nest,
 )
-from ...io.command_line.runner import (
+from ...cli.parsers.runner import (
     CommandLineInputRunner,
 )
 from tudatpy.interface import spice
