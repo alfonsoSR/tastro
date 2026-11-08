@@ -1,5 +1,4 @@
 from .core import SetupBase
-
 from .environment import EnvironmentSetup
 from .propagation import PropagationSetup
 from .estimation import EstimationSetup
