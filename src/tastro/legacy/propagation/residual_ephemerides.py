@@ -1,51 +1,32 @@
+from ...cli.parsers.core import CLInputFigure
 from ..core import AnalysisFigureManagerBase
-from ...cli.parsers.comparison import CLInputFigure
-from ...io import EstimationResults
-from pathlib import Path
-from nastro import graphics as ng, types as nt
-from ..utils import get_propagation_start_epoch_from_config
+import typing
+from ...io import PropagationOutput
+from nastro import types as nt, graphics as ng
 from ...logging import log
 import traceback
-import numpy as np
+from pathlib import Path
+
+if typing.TYPE_CHECKING:
+    import numpy as np
 
 
-class CartesianStateUncertainty[T: nt.Vector](nt.CartesianState):
+class EphemeridesResidualManager(AnalysisFigureManagerBase[CLInputFigure]):
 
-    @staticmethod
-    def from_covariance_history(
-        covariance_history: dict[float, np.ndarray],
-    ) -> "CartesianStateUncertainty":
-
-        # Extract covariance matrix as function of time: (n_epochs, m, m)
-        covariances = np.array(list(covariance_history.values()))
-
-        # Extract standard deviation as function of time: (m, n_epochs)
-        standard_deviations = np.sqrt(covariances.diagonal(0, 1, 2).T)
-
-        return CartesianStateUncertainty(*standard_deviations)
-
-
-class OrbitComparisonManager(AnalysisFigureManagerBase[CLInputFigure]):
-
-    def __init__(self, user_input: "CLInputFigure", frame: str) -> None:
+    def __init__(self, user_input: CLInputFigure, frame: str) -> None:
 
         super().__init__(user_input)
 
         # Initialize containers for calculated and reference states
         self.cstates: dict[Path, nt.CartesianState[nt.Vector]] = {}
         self.rstates: dict[Path, nt.CartesianState[nt.Vector]] = {}
-        self.uncertainties: dict[
-            Path, CartesianStateUncertainty[nt.Vector] | None
-        ] = {}
         self.epochs: dict[Path, "np.ndarray"] = {}
-        self.est_epochs: dict[Path, "np.ndarray"] = {}
 
         # Fill containers with results
         for source in self.user_input.source_dirs:
 
             # Load propagation results
-            estimation = EstimationResults.from_file(source / "estimation.pkl")
-            results = estimation.final_propagation_results
+            results = PropagationOutput.from_file(source / "results.pkl")
 
             # Get propagation output in correct frame
             if frame in ("j2000", "rsw"):
@@ -63,18 +44,24 @@ class OrbitComparisonManager(AnalysisFigureManagerBase[CLInputFigure]):
                 log.fatal(traceback.extract_stack()[-2])
                 exit(1)
 
-            # # Get covariance history
-            # if estimation.covariance_history is None:
-            #     log.warning(f"Covariance history not available for {source}")
-            #     self.uncertainties[source] = None
-            #     self.est_epochs[source] = estimation.epochs
-            # else:
-            #     self.uncertainties[source] = (
-            #         CartesianStateUncertainty.from_covariance_history(
-            #             estimation.covariance_history
-            #         )
-            #     )
-            #     self.est_epochs[source] = estimation.epochs
+        # # Load propagation results
+        # results = PropagationOutput.from_file(self.source_dir / "results.pkl")
+
+        # # Get propagation output in correct frame
+        # if frame in ("j2000", "rsw"):
+
+        #     self.cstate = nt.CartesianState[nt.Vector](
+        #         *getattr(results, f"cstate_{frame}").T
+        #     )
+        #     self.rstate = nt.CartesianState[nt.Vector](
+        #         *getattr(results, f"rstate_{frame}").T
+        #     )
+
+        # else:
+
+        #     log.fatal(f"Requested propagation output in invalid frame: {frame}")
+        #     log.fatal(traceback.extract_stack()[-2])
+        #     exit(1)
 
         # Save frame choice
         self.frame = frame
@@ -99,11 +86,11 @@ class OrbitComparisonManager(AnalysisFigureManagerBase[CLInputFigure]):
 
         # Generate settings for canvas
         canvas_setup = self.generate_canvas_setup(
-            f"estimated-orbit-vs-ephemerides-{self.frame}.png",
+            f"propagation-vs-ephemerides-{self.frame}.png",
             save_in_base=True,
         )
         canvas_setup.canvas_title = (
-            f"Estimated orbit vs ephemerides :: {self.frame.upper()}"
+            f"Propagation vs ephemerides :: {self.frame.upper()}"
         )
 
         # Generate common setup for subfigures
@@ -128,10 +115,12 @@ class OrbitComparisonManager(AnalysisFigureManagerBase[CLInputFigure]):
                 )
 
                 # Add subfigure to list
-                subfigures[components[idx]] = canvas.subplot(current_setup)
+                subfigures[components[idx]] = canvas.subplot(
+                    current_setup  # , ng.DoubleAxis
+                )
 
             # Fill subfigures with data
-            dmars_present: bool = False
+            dmars_present: bool = True
             for source, epochs in self.epochs.items():
 
                 # Get source id
@@ -139,9 +128,7 @@ class OrbitComparisonManager(AnalysisFigureManagerBase[CLInputFigure]):
 
                 # Get dt, residuals and distance to Mars
                 dt = (epochs - self.ref_epoch) / 3600.0
-                # dt_est = (self.est_epochs[source] - self.ref_epoch) / 3600.0
                 residual = self.cstates[source] - self.rstates[source]
-                # uncertainty = self.uncertainties[source]
                 dmars = self.rstates[source].r_mag * 1e-7
 
                 for idx, component in enumerate(subfigures):
@@ -156,15 +143,10 @@ class OrbitComparisonManager(AnalysisFigureManagerBase[CLInputFigure]):
                         getattr(residual, component) * scale,
                         label=source_id if component == "x" else None,
                     )
-                    # if uncertainty is not None:
-                    #     subfig.line(dt_est, 0.0 * dt_est, color="w", alpha=0)
-                    #     subfig.boundary(
-                    #         getattr(uncertainty, component) * scale, alpha=0.7
-                    #     )
-                    # if not dmars_present:
-                    #     subfig.line(
-                    #         dt, dmars, axis="right", alpha=0.2, color="black"
-                    #     )
+                    if not dmars_present:
+                        subfig.line(
+                            dt, dmars, axis="right", alpha=0.2, color="black"
+                        )
 
                 dmars_present = True
 
@@ -186,11 +168,11 @@ class OrbitComparisonManager(AnalysisFigureManagerBase[CLInputFigure]):
 
             # Generate settings for canvas
             canvas_setup = self.generate_canvas_setup(
-                f"estimated-orbit-vs-ephemerides-{self.frame}.png",
+                f"propagation-vs-ephemerides-{self.frame}.png",
                 save_in_base=False,
             )
             canvas_setup.canvas_title = (
-                f"Estimated orbit vs ephemerides :: {self.frame.upper()} "
+                f"Propagation vs ephemerides :: {self.frame.upper()} "
                 f":: {self.get_directory_id(source)}"
             )
 
@@ -238,32 +220,58 @@ class OrbitComparisonManager(AnalysisFigureManagerBase[CLInputFigure]):
         return None
 
 
-# def show_orbits(user_input: "CLInputFigure") -> None:
+# def propagation_residual_wrt_ephemerides(
+#     user_input: "CLInputFigure",
+#     frame: typing.Literal["rsw", "j2000"],
+# ) -> None:
 
 #     # Initialize manager
-#     manager = OrbitComparisonManager(user_input)
+#     manager = EphemeridesResidualManager(user_input, frame)
 
-#     with ng.CompareRswStates() as figure:
+#     # Define quantities to plot
+#     dt = (manager.epochs - manager.ref_epoch) / 3600.0
+#     residual = manager.cstate - manager.rstate
+#     dmars = manager.rstate.r_mag * 1e-7
 
-#         # Loop over results
-#         for source, results in manager.estimation_results.items():
+#     # Define settings for main figure
+#     canvas_setup = ng.PlotSetup(
+#         canvas_size=(8, 6),
+#         canvas_title=(
+#             f"Propagation vs ephemerides :: {frame.upper()} "
+#             f":: {manager.get_directory_id(manager.source_dir)}"
+#         ),
+#         dir=manager.source_dir,
+#         name=f"propagation-vs-ephemerides-{frame}.png",
+#         save=manager.user_input.save,
+#         show=manager.user_input.show,
+#     )
 
-#             # Get orbit for best iteration
-#             simulation = results.final_propagation_results
+#     # Define common settings for subfigure
+#     subfig_setup = ng.PlotSetup(
+#         xlabel=f"Hours past {manager.ref_epoch_isot}",
+#         rlabel=r"$d_{mars}$ [$x10^{-7}$ m]",
+#         scilimits=(-2, 3),
+#     )
 
-#             # Calculate dt and difference wrt ephemerides
-#             dt = (simulation.epochs - manager.ref_epoch) / 3600.0
-#             cstate = nt.CartesianState(*simulation.cstate_rsw.T)
-#             rstate = nt.CartesianState(*simulation.rstate_rsw.T)
-#             residual = cstate - rstate
+#     # Generate figure
+#     with ng.Mosaic("ab;cd;ef", canvas_setup) as canvas:
 
-#             # Add residual to figure
-#             figure.compare_states(
-#                 dt,
-#                 cstate,
-#                 rstate,
-#                 is_dt=True,
-#                 label=manager.get_directory_id(source),
+#         components = ["x", "dx", "y", "dy", "z", "dz"]
+
+#         for idx, label in enumerate(manager.vector_components):
+
+#             # Generate settings for current subplot
+#             unit = "m/s" if ((idx % 2) != 0) else "m"
+#             current_setup = subfig_setup.version(
+#                 ylabel=rf"$\Delta {label}$ [{unit}]"
 #             )
+
+#             # Generate subfigure
+#             with canvas.subplot(
+#                 setup=current_setup, generator=ng.DoubleAxis
+#             ) as subfig:
+
+#                 subfig.line(dt, getattr(residual, components[idx]))
+#                 subfig.line(dt, dmars, axis="right", alpha=0.5)
 
 #     return None

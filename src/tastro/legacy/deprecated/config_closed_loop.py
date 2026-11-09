@@ -1,3 +1,4 @@
+# Previously: tastro/config/estimation/observations/__closed_loop.py
 raise DeprecationWarning("This module is deprecated")
 
 from ...core import SetupBase

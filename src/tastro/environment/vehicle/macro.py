@@ -9,7 +9,6 @@ import typing
 import traceback
 
 if typing.TYPE_CHECKING:
-    from ...config import CaseSetup
     from ...config.environment.vehicles import VehicleSetup
     from ...config.environment.vehicles import (
         SinglePanelShapeSettings,

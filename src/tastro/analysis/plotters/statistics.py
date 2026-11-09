@@ -1,17 +1,13 @@
-from tastro.cli.parsers.plotters import DEFAULT_CANVAS_SIZE
-from .core import AnalysisManager, ComparisonManager, VisualizationManager
-from ...cli.parsers.plotters import PlotterInput
+from .core import AnalysisManager, ComparisonManager
 from pathlib import Path
 from ...io import EstimationResults
 import yaml
 from nastro import graphics as ng
 import numpy as np
 from ...cli.parsers import (
-    ResultComparisonInput,
     ResultVisualizationInput,
     ParameterDistributionInput,
 )
-from matplotlib import pyplot as plt
 
 
 def get_labels_of_estimated_parameters(

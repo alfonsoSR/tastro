@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from ..common import RawObservationRecord
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from tudatpy.astro import time_representation as ttime

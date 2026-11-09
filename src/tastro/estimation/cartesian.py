@@ -5,12 +5,9 @@ from tudatpy.estimation.observable_models_setup import (
     links as tlinks,
     biases as tbias,
 )
-from tudatpy.dynamics.environment import SystemOfBodies
 from tudatpy.estimation import observations as tobs
 from ..logging import log
-import traceback
 from ..io import PropagationOutput
-import numpy as np
 
 
 class CartesianSettingsGenerator(

@@ -1,4 +1,3 @@
-from tastro.config.general import CaseSetup
 from ..config.environment.stations import StationSetup
 from tudatpy.dynamics.environment_setup import (
     ground_station as tgss,
@@ -6,7 +5,6 @@ from tudatpy.dynamics.environment_setup import (
 )
 from tudatpy.astro import element_conversion as telc
 import numpy as np
-from tudatpy.astro import time_representation as ttime
 from ..core import SettingsGenerator
 
 # from ..io.observations.closed_loop import (

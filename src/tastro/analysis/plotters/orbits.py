@@ -1,3 +1,4 @@
+from ...config import CaseSetup
 from dataclasses import dataclass
 from nastro import graphics as ng, types as nt
 import numpy as np
@@ -9,7 +10,6 @@ from .core import AnalysisManager
 from pathlib import Path
 from ...io import PropagationOutput, EstimationResults
 import enum
-from ..utils import get_propagaton_start_epoch_from_config_file
 from tudatpy.astro import (
     time_representation as ttime,
     frame_conversion as tframe,
@@ -188,7 +188,7 @@ class StateResidualVisualizationManager(
         super().__init__(user_input)
 
         # Extract reference epoch from first configuration file
-        ref_epoch = get_propagaton_start_epoch_from_config_file(
+        ref_epoch = CaseSetup.propagation_start_epoch_from_file(
             config_file=(self.source_dirs[0] / "configuration.yaml")
         )
         self.ref_epoch = ref_epoch.to_float()
@@ -926,7 +926,7 @@ class StateResidualComparisonManager(
         self.ref_dir = user_input.reference
 
         # Extract reference epoch from first configuration file
-        ref_epoch = get_propagaton_start_epoch_from_config_file(
+        ref_epoch = CaseSetup.propagation_start_epoch_from_file(
             config_file=(self.ref_dir / "configuration.yaml")
         )
         self.ref_epoch = ref_epoch.to_float()

@@ -1,5 +1,3 @@
-from .cartesian_residuals import show_cartesian_residuals
-from .doppler_residuals import show_doppler_residuals
 from ...cli.parsers.core import CLParserFigure, CLParser
 from .prefit import show_doppler_prefit_residuals
 from .doppler_residuals import (
@@ -9,7 +7,7 @@ from .doppler_residuals import (
 )
 from .orbit_comparison import OrbitComparisonManager
 from .doppler import DopplerEstimationManager
-from ..core import ExecutionManager
+from ...analysis.runners import ExecutionManager
 
 
 def show_cartesian_residuals_cli() -> None:
@@ -50,7 +48,7 @@ def show_doppler_prefit_residuals_cli() -> None:
 def show_estimation_summary_cli() -> None:
 
     user_input = CLParser().parse_args()
-    ExecutionManager(user_input).concurrent_execution(
+    ExecutionManager(user_input.source_dirs).concurrent_execution(
         show_estimation_summary_single
     )
 
@@ -60,7 +58,7 @@ def show_estimation_summary_cli() -> None:
 def show_correlation_matrix_cli() -> None:
 
     user_input = CLParser().parse_args()
-    ExecutionManager(user_input).concurrent_execution(
+    ExecutionManager(user_input.source_dirs).concurrent_execution(
         show_correlation_matrix_single
     )
 

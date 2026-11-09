@@ -1,9 +1,8 @@
-from ...cli.parsers.core import CLInputFigure, CommandLineInput
+from ...cli.parsers.core import CLInputFigure
 from ..core import AnalysisFigureManagerBase
 from ...io import EstimationResults, PrefitResults
 from pathlib import Path
 from ...logging import log
-import traceback
 from nastro import graphics as ng, types as nt
 import numpy as np
 

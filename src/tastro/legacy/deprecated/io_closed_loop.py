@@ -1,3 +1,4 @@
+# Previously: tastro/io/observations/__closed_loop.py
 raise DeprecationWarning("This module is deprecated")
 from pathlib import Path
 from tudatpy.estimation.observations import SingleObservationSet

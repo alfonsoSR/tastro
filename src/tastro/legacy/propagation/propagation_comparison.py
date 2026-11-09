@@ -1,4 +1,4 @@
-from ...cli.parsers.comparison import CLInputComparison, CLParserComparison
+from ...cli.parsers.comparison import CLInputComparison
 from ..core import AnalysisFigureManagerBase
 from ...io import PropagationOutput
 from nastro import types as nt, graphics as ng

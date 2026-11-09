@@ -1,9 +1,7 @@
-from typing import Any
-import argparse
-from .core import Command, register_group
+from .core import Command
 from ..parsers import CLParser, CommandLineInput
-from ...analysis.core import ExecutionManager
 from ...analysis.runners import (
+    ExecutionManager,
     propagation_from_source_directory,
     estimation_from_source_directory,
     prefit_analysis_from_source_directory,
@@ -11,19 +9,19 @@ from ...analysis.runners import (
 
 
 def propagation(user_input: CommandLineInput) -> None:
-    ExecutionManager(user_input).concurrent_execution(
+    ExecutionManager(user_input.source_dirs).concurrent_execution(
         propagation_from_source_directory
     )
 
 
 def estimation(user_input: CommandLineInput) -> None:
-    ExecutionManager(user_input).concurrent_execution(
+    ExecutionManager(user_input.source_dirs).concurrent_execution(
         estimation_from_source_directory
     )
 
 
 def prefit(user_input: CommandLineInput) -> None:
-    ExecutionManager(user_input).concurrent_execution(
+    ExecutionManager(user_input.source_dirs).concurrent_execution(
         prefit_analysis_from_source_directory
     )
 

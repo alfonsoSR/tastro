@@ -3,13 +3,11 @@ from ...cli.parsers.core import CommandLineInput
 from ...io import PrefitResults
 from ...config import CaseSetup
 from ...environment import system_of_bodies_from_config
-from ...environment.vehicle import VehicleSettings
 from ...estimation import EstimationManager
 from tudatpy.estimation.observations_setup import (
     observations_simulation_settings as tosim,
 )
 from tudatpy.estimation import observations as tobs
-from tudatpy.dynamics.environment_setup import ephemeris as teph
 from ...logging import log
 from tudatpy.interface import spice
 from pathlib import Path

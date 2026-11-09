@@ -3,23 +3,12 @@ from tudatpy.dynamics import (
     parameters_setup as tpars,
     parameters as tpar,
 )
-from nastro import graphics as ng
-import copy
-from tudatpy.dynamics.propagation import (
-    SimulationResults,
-    SingleArcSimulationResults,
-    SingleArcVariationalSimulationResults,
-)
-from pathlib import Path
-from tudatpy.dynamics.environment_setup import ephemeris as tephs
 from tudatpy.dynamics.propagation_setup import propagator as tprop
 from tudatpy.interface import spice
 from tudatpy.estimation.observable_models_setup import (
-    light_time_corrections as tlight,
     model_settings as toms,
     links as tlinks,
 )
-from tudatpy.estimation.observations import observations_processing as tobsp
 from tudatpy.estimation.observations_setup import (
     observations_simulation_settings as tosim,
 )
@@ -37,9 +26,7 @@ from typing import Type, TYPE_CHECKING
 from tudatpy.astro import time_representation as ttime
 from ..io import EstimationResults, PrefitResults
 import traceback
-from scipy.signal import find_peaks
 import numpy as np
-from nastro import graphics as ng
 
 if TYPE_CHECKING:
     from tudatpy.dynamics.environment import SystemOfBodies
@@ -168,6 +155,10 @@ class EstimationManager:
 
         # Drag coefficient
         if self.config.estimation.parameters.arcwise_drag_coefficient:
+
+            # Imported here to avoid loading scipy when it is not needed.
+            # TODO: This code will be refactored in the future.
+            from scipy.signal import find_peaks
 
             # Get distance to central body over estimation
             center = self.config.environment.general.center

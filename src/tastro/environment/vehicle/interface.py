@@ -3,18 +3,15 @@ from tudatpy.dynamics.environment_setup import (
     ephemeris as tephs,
     rotation_model as trots,
     radiation_pressure as trad,
-    shape as tshape,
     vehicle_systems as tvs,
     aerodynamic_coefficients as taero,
 )
-import numpy as np
 from ...core import SettingsGenerator
 from tudatpy.dynamics.environment import SystemOfBodies
 from tudatpy.interface import spice
 from ...logging import log
 from .macro import (
     paneled_mex_model,
-    create_paneled_geometry_from_config,
     create_paneled_model,
 )
 

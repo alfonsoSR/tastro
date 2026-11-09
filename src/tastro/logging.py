@@ -1,5 +1,7 @@
 import logging
 from pathlib import Path
+from typing import Callable
+import functools
 import sys
 
 GREY = "\x1b[38;20m"
@@ -118,6 +120,41 @@ class StdoutHandler(logging.StreamHandler):
 
 log = logging.getLogger(__package__)
 log.setLevel(logging.DEBUG)
+
+
+def log_to_file(file_name: str) -> Callable:
+
+    def log_to_file_decorator(function: Callable) -> Callable:
+
+        @functools.wraps(function)
+        def function_inner(source_dir: Path) -> None:
+
+            # Define output file for logging
+            output_file = source_dir / f"{file_name}"
+
+            with output_file.open("w") as buffer:
+
+                file_handler = AlternativeFileHandler.from_buffer_and_level(
+                    buffer=buffer,
+                    level="DEBUG",
+                )
+                stdout_handler = StdoutHandler.from_level("DEBUG")
+                log.addHandler(file_handler)
+                log.addHandler(stdout_handler)
+
+                # Run function
+                output = function(source_dir)
+
+                # Remove handler
+                log.removeHandler(file_handler)
+                log.removeHandler(stdout_handler)
+
+            return output
+
+        return function_inner
+
+    return log_to_file_decorator
+
 
 # stdout_handler = logging.StreamHandler()
 # stdout_handler.setLevel(logging.DEBUG)

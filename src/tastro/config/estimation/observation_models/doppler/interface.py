@@ -1,8 +1,6 @@
 from ..links import LinkEndSetup
 
 from ....core import SetupBase
-from ...light_propagation import LightTimeSetup
-from tudatpy.estimation.observations_setup import ancillary_settings as tanc
 from .ancillary import DopplerAncillarySettingsSetup
 
 

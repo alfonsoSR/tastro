@@ -17,7 +17,6 @@ from ..logging import log
 from ..io.observations import load_open_loop_doppler_observations_from_config
 import numpy as np
 import spiceypy
-from nastro import graphics as ng
 
 from typing import TYPE_CHECKING
 

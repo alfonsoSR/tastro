@@ -1,4 +1,3 @@
-from ...cli.parsers import CommandLineInput
 from pathlib import Path
 from ...config import CaseSetup
 from tudatpy.interface import spice
@@ -8,47 +7,35 @@ from ...propagation import (
     propagate_translational_dynamics,
 )
 from ...estimation import perform_estimation, perform_prefit_analysis
-from ...logging import log, FileHandler, StdoutHandler, AlternativeFileHandler
+from ...logging import log, log_to_file
 from typing import Callable
 import multiprocessing as mp
-from ...io import PropagationOutput, EstimationResults
-from tudatpy.estimation.estimation_analysis import propagate_covariance
-import functools
-import sys
+from ...io import EstimationResults
 
 
-def log_to_file(file_name: str) -> Callable:
+class ExecutionManager:
+    """Runs the same task for several source directories, in parallel when
+    there is more than one
 
-    def log_to_file_decorator(function: Callable) -> Callable:
+    :param source_dirs: Directories containing configuration and results
+    """
 
-        @functools.wraps(function)
-        def function_inner(source_dir: Path) -> None:
+    def __init__(self, source_dirs: list[Path]) -> None:
 
-            # Define output file for logging
-            output_file = source_dir / f"{file_name}"
+        # Save source directories
+        self.source_dirs: list[Path] = source_dirs
 
-            with output_file.open("w") as buffer:
+        return None
 
-                file_handler = AlternativeFileHandler.from_buffer_and_level(
-                    buffer=buffer,
-                    level="DEBUG",
-                )
-                stdout_handler = StdoutHandler.from_level("DEBUG")
-                log.addHandler(file_handler)
-                log.addHandler(stdout_handler)
+    def concurrent_execution(self, function: Callable) -> None:
 
-                # Run function
-                output = function(source_dir)
+        if len(self.source_dirs) > 1:
+            with mp.Pool() as pool:
+                pool.map(function, self.source_dirs)
+        else:
+            function(self.source_dirs[0])
 
-                # Remove handler
-                log.removeHandler(file_handler)
-                log.removeHandler(stdout_handler)
-
-            return output
-
-        return function_inner
-
-    return log_to_file_decorator
+        return None
 
 
 @log_to_file("tpropagator.log")

@@ -1,6 +1,5 @@
-from typing import Any, Callable
-import argparse
-from .core import Command, register_group
+from typing import Callable
+from .core import Command
 from ..parsers import (
     ResultVisualizationParser,
     ResultVisualizationInput,

@@ -1,3 +1,4 @@
+# Previously: tastro/analysis/prefit.py
 raise DeprecationWarning("This submodule is deprecated")
 
 from .. import (

@@ -8,7 +8,6 @@ from tudatpy.estimation.observations import observations_processing as tobsp
 from tudatpy.estimation.observable_models_setup import (
     model_settings as toms,
     links as tlinks,
-    biases as tbias,
 )
 from tudatpy.estimation.observations_setup import (
     ancillary_settings as tancs,
@@ -17,11 +16,8 @@ from tudatpy.estimation.observations_setup import (
 from tudatpy.dynamics.environment import SystemOfBodies
 from .common import ObservationModelSettingsGenerator
 from ..logging import log
-import traceback
 from ..io.observations import load_closed_loop_doppler_observations_from_config
 import numpy as np
-from nastro import graphics as ng
-from pathlib import Path
 
 
 class ClosedLoopSettingsGenerator(

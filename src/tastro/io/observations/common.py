@@ -4,11 +4,6 @@ from ...logging import log
 import traceback
 import abc
 
-from typing import TYPE_CHECKING, Self
-
-if TYPE_CHECKING:
-    from ...config import CaseSetup
-
 
 class RawObservationRecord(metaclass=abc.ABCMeta):
 

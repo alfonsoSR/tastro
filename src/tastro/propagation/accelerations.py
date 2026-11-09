@@ -1,6 +1,5 @@
 from tudatpy.dynamics.propagation_setup import acceleration as tacs
 from ..config import CaseSetup
-from dataclasses import dataclass
 from ..logging import log
 
 

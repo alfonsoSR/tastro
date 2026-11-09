@@ -3,7 +3,6 @@ from ....logging import log
 import traceback
 from tudatpy.astro import time_representation as ttime
 from tudatpy import data as tdata
-import numpy as np
 
 
 class FdetsLoader:

@@ -1,3 +1,4 @@
+# Previously: tastro/io/observations/interface.py
 raise DeprecationWarning("This module is deprecated")
 from .closed_loop import (
     DopplerObservationRecord,

@@ -1,33 +1,9 @@
 from ..logging import log
 from ..cli.parsers.core import CommandLineInput, CLInputFigure
-from .utils import get_propagation_start_epoch_from_config
 from ..config import CaseSetup
 from tudatpy.astro import time_representation as ttime
 from pathlib import Path
 from nastro import graphics as ng
-from typing import Callable
-import multiprocessing as mp
-
-
-class ExecutionManager[T: "CommandLineInput"]:
-    """Manager for the concurrent execution of analyses"""
-
-    def __init__(self, user_input: T) -> None:
-
-        # Save source directories
-        self.source_dirs: list[Path] = user_input.source_dirs
-
-        return None
-
-    def concurrent_execution(self, function: Callable) -> None:
-
-        if len(self.source_dirs) > 1:
-            with mp.Pool() as pool:
-                pool.map(function, self.source_dirs)
-        else:
-            function(self.source_dirs[0])
-
-        return None
 
 
 class AnalysisManagerBase[T: "CommandLineInput"]:
@@ -59,7 +35,7 @@ class AnalysisFigureManagerBase[T: "CLInputFigure"](AnalysisManagerBase[T]):
         log.setLevel("DEBUG")
 
         # Define reference propagation epoch as float and ISO string
-        __epoch = get_propagation_start_epoch_from_config(self.config)
+        __epoch = self.config.propagation_start_epoch()
         self.ref_epoch = __epoch.to_float()
         self.ref_epoch_isot = ttime.DateTime.from_epoch_time_object(
             __epoch

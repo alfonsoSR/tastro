@@ -14,7 +14,6 @@ from ..config.estimation.observation_models.doppler import (
 )
 from ..config.estimation.observation_models.links import LinkEndSetup
 from ..logging import log
-import traceback
 
 from typing import TYPE_CHECKING, Union
 import abc

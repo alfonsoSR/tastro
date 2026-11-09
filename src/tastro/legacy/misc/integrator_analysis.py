@@ -3,7 +3,6 @@ from ...cli.parsers.core import CLInputFigure
 from ...logging import log
 from ...io import PropagationOutput
 from ...config import CaseSetup
-from tudatpy.astro import time_representation as ttime
 from nastro import graphics as ng, types as nt
 import numpy as np
 from scipy import interpolate as scint

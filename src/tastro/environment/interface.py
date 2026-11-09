@@ -6,7 +6,6 @@ from .station import StationSettings
 from tudatpy.estimation.observable_models_setup import (
     light_time_corrections as tlight,
 )
-from pathlib import Path
 from ..logging import log
 
 # from ..estimation import update_system_of_bodies

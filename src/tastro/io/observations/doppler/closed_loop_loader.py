@@ -1,7 +1,7 @@
 from tastro.config import CaseSetup
 from ..common import RawObservationRecord
 import numpy as np
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING
 from tudatpy.astro import time_representation as ttime
 from ....logging import log
 from .ifms_parser import IFMSLoader

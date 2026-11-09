@@ -10,18 +10,11 @@ from ...cli.parsers.runner import (
 )
 from tudatpy.interface import spice
 from tudatpy.dynamics import (
-    parameters_setup as tpars,
     simulator as tsim,
     propagation as tprop,
 )
-from tudatpy.dynamics.propagation_setup import acceleration as tacc
-from tudatpy.astro import time_representation as ttime
 from tudatpy.estimation import (
     estimation_analysis as testa,
-    observations as tobs,
-)
-from tudatpy.estimation.observations_setup import (
-    observations_simulation_settings as tosim,
 )
 from ...logging import log
 from ..core import AnalysisManagerBase

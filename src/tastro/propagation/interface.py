@@ -4,15 +4,12 @@ from .core import PropagationSettings
 from tudatpy.dynamics.propagation_setup import (
     create_acceleration_models,
     propagator as tprops,
-    acceleration as tacs,
-    dependent_variable as tdvar,
 )
 from tudatpy.dynamics import simulator as tsim, propagation as tprop
 from tudatpy.interface import spice
 import numpy as np
 from ..logging import log
 from ..io import PropagationOutput
-import pickle
 
 if TYPE_CHECKING:
     from tudatpy.dynamics.environment import SystemOfBodies

@@ -1,7 +1,5 @@
 from ...cli.parsers.core import (
     CLInputFigure,
-    CLParserFigure,
-    CommandLineInput,
 )
 from ..core import AnalysisFigureManagerBase
 from ...io import EstimationResults, PropagationOutput

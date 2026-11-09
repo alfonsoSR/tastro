@@ -1,3 +1,4 @@
+# Previously: tastro/analysis/estimation_results.py
 raise DeprecationWarning("This submodule is deprecated")
 
 from ..io import PropagationOutput, EstimationResults
