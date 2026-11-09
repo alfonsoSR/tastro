@@ -9,10 +9,7 @@ from tudatpy.estimation.observable_models_setup import (
     model_settings as toms,
     links as tlinks,
 )
-from tudatpy.estimation.observations_setup import (
-    ancillary_settings as tancs,
-    observations_wrapper as towpr,
-)
+from tudatpy.estimation.observations_setup import ancillary_settings as tancs
 from tudatpy.dynamics.environment import SystemOfBodies
 from .common import ObservationModelSettingsGenerator
 from ..logging import log
@@ -194,7 +191,7 @@ class ClosedLoopSettingsGenerator(
                 / self.local.ancillary.integration_time.to_float()
             )
 
-            observation_collection = towpr.create_compressed_doppler_collection(
+            observation_collection = tobs.create_compressed_doppler_collection(
                 original_observation_collection=observation_collection,
                 compression_ratio=compression_ratio,
             )
