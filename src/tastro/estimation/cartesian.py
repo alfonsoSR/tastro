@@ -29,7 +29,8 @@ class CartesianSettingsGenerator(
         )
 
         # Cartesian link definitions
-        link_definitions = self.link_definitions()
+        link_ends_collection = self.link_ends()
+        # link_definitions = self.link_definitions()
 
         # Define single observation sets
         observation_collection_contents: list[tobs.SingleObservationSet] = []
@@ -54,9 +55,9 @@ class CartesianSettingsGenerator(
 
             # Generate single observation set
             observation_collection_contents.append(
-                tobs.single_observation_set(
+                tobs.create_single_observation_set(
                     observable_type=self.observable_type,
-                    link_definition=link_definitions[source.link],
+                    link_ends=link_ends_collection[source.link],
                     observations=cartesian_positions,
                     observation_times=raw_observations.epochs.tolist(),
                     reference_link_end=tlinks.LinkEndType.observed_body,

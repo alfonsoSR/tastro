@@ -89,7 +89,8 @@ class ClosedLoopSettingsGenerator(
         ancillary_settings = self.ancillary_settings()
 
         # Doppler link definitions
-        link_definitions = self.link_definitions()
+        link_ends_collection = self.link_ends()
+        # link_definitions = self.link_definitions()
 
         # Load raw observation data per station
         data_per_station = load_closed_loop_doppler_observations_from_config(
@@ -112,7 +113,8 @@ class ClosedLoopSettingsGenerator(
             # )
 
             # Get link definition for current station
-            link_definition = link_definitions[station]
+            current_link_ends = link_ends_collection[station]
+            # link_definition = link_definitions[station]
 
             # # Link definition for current station
             # link_definition = doppler_link_definition_from_config(
@@ -121,14 +123,22 @@ class ClosedLoopSettingsGenerator(
 
             # Create observation set
             values = [np.array([x]) for x in station_data.observations]
-            observation_set = tobs.single_observation_set(
+            observation_set = tobs.create_single_observation_set(
                 observable_type=self.observable_type,
-                link_definition=link_definition,
+                link_ends=current_link_ends,
                 observations=values,
                 observation_times=station_data.epochs.tolist(),
                 reference_link_end=tlinks.LinkEndType.receiver,
                 ancillary_settings=ancillary_settings,
             )
+            # observation_set = tobs.create_single_observation_set(
+            #     observable_type=self.observable_type,
+            #     link_definition=link_definition,
+            #     observations=values,
+            #     observation_times=station_data.epochs.tolist(),
+            #     reference_link_end=tlinks.LinkEndType.receiver,
+            #     ancillary_settings=ancillary_settings,
+            # )
 
             # splitter_nobs = tobsp.observation_set_splitter(
             #     splitter_type=tobsp.ObservationSetSplitterType.nb_observations_splitter,

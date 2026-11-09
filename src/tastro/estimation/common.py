@@ -191,22 +191,51 @@ class ObservationModelSettingsGenerator[
 
     #     return collection
 
-    def link_definitions(self) -> dict[str, tlinks.LinkDefinition]:
+    def link_ends(
+        self,
+    ) -> dict[str, dict[tlinks.LinkEndType, tlinks.LinkEndId]]:
 
-        link_definitions: dict[str, tlinks.LinkDefinition] = {}
+        link_ends: dict[str, dict[tlinks.LinkEndType, tlinks.LinkEndId]] = {}
         for link_id, link_config in self.local.link_definitions.items():
 
             log.debug(f"Link definition :: {link_id}")
 
-            link_ends = {
+            link_ends[link_id] = {
                 getattr(
                     tlinks.LinkEndType, link_end_type
                 ): link_end_from_config(link_end_config, link_id)
                 for link_end_type, link_end_config in link_config.__dict__.items()
             }
-            link_definitions[link_id] = tlinks.LinkDefinition(link_ends)
+
+        return link_ends
+
+    def link_definitions(self) -> dict[str, tlinks.LinkDefinition]:
+
+        # Get collection of link ends
+        link_ends_collection = self.link_ends()
+
+        # Create link definitions
+        link_definitions = {
+            link_id: tlinks.LinkDefinition(link_ends)
+            for (link_id, link_ends) in link_ends_collection.items()
+        }
 
         return link_definitions
+
+        # link_definitions: dict[str, tlinks.LinkDefinition] = {}
+        # for link_id, link_config in self.local.link_definitions.items():
+
+        #     log.debug(f"Link definition :: {link_id}")
+
+        #     link_ends = {
+        #         getattr(
+        #             tlinks.LinkEndType, link_end_type
+        #         ): link_end_from_config(link_end_config, link_id)
+        #         for link_end_type, link_end_config in link_config.__dict__.items()
+        #     }
+        #     link_definitions[link_id] = tlinks.LinkDefinition(link_ends)
+
+        # return link_definitions
 
     def light_time_correction_settings(
         self,

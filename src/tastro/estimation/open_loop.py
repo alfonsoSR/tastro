@@ -137,22 +137,28 @@ class OpenLoopSettingsGenerator(
                 uplink = link_end_from_reference_point(
                     uplink_station, "Earth", uplink_station
                 )
-                link_definition = tlinks.LinkDefinition(
-                    {
-                        tlinks.LinkEndType.transmitter: uplink,
-                        tlinks.LinkEndType.retransmitter: spacecraft_link_end,
-                        tlinks.LinkEndType.receiver: station_link_end,
-                    }
-                )
+                # TODO: Why not use the method of the parent class?
+                link_ends = {
+                    tlinks.LinkEndType.transmitter: uplink,
+                    tlinks.LinkEndType.retransmitter: spacecraft_link_end,
+                    tlinks.LinkEndType.receiver: station_link_end,
+                }
+                # link_definition = tlinks.LinkDefinition(
+                #     {
+                #         tlinks.LinkEndType.transmitter: uplink,
+                #         tlinks.LinkEndType.retransmitter: spacecraft_link_end,
+                #         tlinks.LinkEndType.receiver: station_link_end,
+                #     }
+                # )
 
                 # Create observation subset
                 values = [
                     np.array([x])
                     for x in observations_per_uplink[uplink_station]
                 ]
-                observation_subset = tobs.single_observation_set(
+                observation_subset = tobs.create_single_observation_set(
                     observable_type=self.observable_type,
-                    link_definition=link_definition,
+                    link_ends=link_ends,
                     observations=values,
                     observation_times=epochs_per_uplink[uplink_station],
                     reference_link_end=tlinks.LinkEndType.receiver,
