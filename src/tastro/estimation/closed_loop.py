@@ -127,7 +127,7 @@ class ClosedLoopSettingsGenerator(
                 observations=values,
                 observation_times=station_data.epochs.tolist(),
                 reference_link_end=tlinks.LinkEndType.receiver,
-                ancilliary_settings=ancillary_settings,
+                ancillary_settings=ancillary_settings,
             )
 
             # splitter_nobs = tobsp.observation_set_splitter(
@@ -205,11 +205,11 @@ class ClosedLoopSettingsGenerator(
 
     def ancillary_settings(
         self,
-    ) -> tancs.ObservationAncilliarySimulationSettings:
+    ) -> tancs.ObservationAncillarySimulationSettings:
 
         log.debug("Ancillary settings")
 
-        return tancs.dsn_n_way_doppler_ancilliary_settings(
+        return tancs.dsn_n_way_doppler_ancillary_settings(
             frequency_bands=[
                 self.local.ancillary.uplink_band,
                 self.local.ancillary.downlink_band,

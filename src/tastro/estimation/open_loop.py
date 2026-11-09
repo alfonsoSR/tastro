@@ -156,7 +156,7 @@ class OpenLoopSettingsGenerator(
                     observations=values,
                     observation_times=epochs_per_uplink[uplink_station],
                     reference_link_end=tlinks.LinkEndType.receiver,
-                    ancilliary_settings=ancillary_settings,
+                    ancillary_settings=ancillary_settings,
                 )
 
                 # Add noise from the Fdets as raw weights
@@ -193,7 +193,7 @@ class OpenLoopSettingsGenerator(
                 #     observations=values,
                 #     observation_times=station_data.epochs.tolist(),
                 #     reference_link_end=tlinks.LinkEndType.receiver,
-                #     ancilliary_settings=ancillary_settings,
+                #     ancillary_settings=ancillary_settings,
                 # )
 
                 # Apply absolute value filters
@@ -263,7 +263,7 @@ class OpenLoopSettingsGenerator(
 
     def ancillary_settings(
         self,
-    ) -> tancs.ObservationAncilliarySimulationSettings:
+    ) -> tancs.ObservationAncillarySimulationSettings:
 
         log.debug("Ancillary settings")
 
@@ -274,7 +274,7 @@ class OpenLoopSettingsGenerator(
             ]
         )
 
-        # return tancs.dsn_n_way_doppler_ancilliary_settings(
+        # return tancs.dsn_n_way_doppler_ancillary_settings(
         #     frequency_bands=[
         #         self.local.ancillary.uplink_band,
         #         self.local.ancillary.downlink_band,
