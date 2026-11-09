@@ -16,7 +16,7 @@ from tudatpy.astro import (
 )
 from ...logging import log
 import traceback
-from tudatpy.interface import spice
+from tudatpy.data_input.environment_data import spice
 
 
 class AnalysisType(enum.IntEnum):

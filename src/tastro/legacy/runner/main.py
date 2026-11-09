@@ -8,7 +8,7 @@ from tastro import (
 from ...cli.parsers.runner import (
     CommandLineInputRunner,
 )
-from tudatpy.interface import spice
+from tudatpy.data_input.environment_data import spice
 from tudatpy.dynamics import (
     simulator as tsim,
     propagation as tprop,

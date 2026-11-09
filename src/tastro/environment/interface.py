@@ -12,7 +12,7 @@ from ..logging import log
 import numpy as np
 import typing
 from tudatpy.dynamics.environment_setup import ephemeris as tephs
-from tudatpy.interface import spice
+from tudatpy.data_input.environment_data import spice
 import traceback
 
 if typing.TYPE_CHECKING:

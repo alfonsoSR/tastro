@@ -6,7 +6,7 @@ from tudatpy.dynamics.propagation_setup import (
     propagator as tprops,
 )
 from tudatpy.dynamics import simulator as tsim, propagation as tprop
-from tudatpy.interface import spice
+from tudatpy.data_input.environment_data import spice
 import numpy as np
 from ..logging import log
 from ..io import PropagationOutput

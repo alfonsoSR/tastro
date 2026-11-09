@@ -4,7 +4,7 @@ from tudatpy.astro import (
     frame_conversion as tframe,
 )
 from tudatpy.dynamics import propagation as tprop
-from tudatpy.interface import spice
+from tudatpy.data_input.environment_data import spice
 import numpy as np
 from dataclasses import dataclass
 import pickle

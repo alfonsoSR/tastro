@@ -9,7 +9,7 @@ from tudatpy.estimation.observations_setup import (
 )
 from tudatpy.estimation import observations as tobs
 from ...logging import log
-from tudatpy.interface import spice
+from tudatpy.data_input.environment_data import spice
 from pathlib import Path
 import multiprocessing as mp
 

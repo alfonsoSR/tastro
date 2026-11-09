@@ -4,7 +4,7 @@ from tudatpy.dynamics import (
     parameters as tpar,
 )
 from tudatpy.dynamics.propagation_setup import propagator as tprop
-from tudatpy.interface import spice
+from tudatpy.data_input.environment_data import spice
 from tudatpy.estimation.observable_models_setup import (
     model_settings as toms,
     links as tlinks,

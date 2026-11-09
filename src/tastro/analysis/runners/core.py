@@ -1,6 +1,6 @@
 from pathlib import Path
 from ...config import CaseSetup
-from tudatpy.interface import spice
+from tudatpy.data_input.environment_data import spice
 from ...environment import system_of_bodies_from_config
 from ...propagation import (
     translational_propagator_settings_from_config,

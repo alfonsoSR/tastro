@@ -8,7 +8,7 @@ from tudatpy.dynamics.environment_setup import (
 )
 from ...core import SettingsGenerator
 from tudatpy.dynamics.environment import SystemOfBodies
-from tudatpy.interface import spice
+from tudatpy.data_input.environment_data import spice
 from ...logging import log
 from .macro import (
     paneled_mex_model,

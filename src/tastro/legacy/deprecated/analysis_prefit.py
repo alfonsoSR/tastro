@@ -18,7 +18,7 @@ from tudatpy.estimation import observations as tobs
 from tudatpy.estimation.observations import observations_processing as tobsp
 import numpy as np
 import pickle
-from tudatpy.interface import spice
+from tudatpy.data_input.environment_data import spice
 from tudatpy.astro import time_representation as ttime
 from nastro import graphics as ng, types as nt
 from .utils import get_propagation_start_epoch_from_config
