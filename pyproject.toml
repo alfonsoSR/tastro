@@ -36,9 +36,6 @@ where = [
     "src"
 ]
 
-[tool.setuptools_scm]
-version_file = "src/tastro/_version.py"
-
 [tool.setuptools_scm.scm.git]
 pre_parse = "fail_on_missing_submodules"
 describe_command = "git describe --dirty --tags --long --exclude *js*"
