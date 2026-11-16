@@ -1,3 +1,4 @@
 from .general import CaseSetup
+from .core import InternalResources
 
-__all__ = ["CaseSetup"]
+__all__ = ["CaseSetup", "InternalResources"]

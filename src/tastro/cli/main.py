@@ -4,6 +4,7 @@ from .commands.compare import COMPARISON_COMMANDS
 from .commands.plot import PLOT_COMMANDS
 from .commands.run import RUN_COMMANDS
 from .commands.core import register_group
+from ..config import InternalResources
 
 
 def main() -> None:

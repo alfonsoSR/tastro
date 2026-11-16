@@ -1,4 +1,4 @@
-from .core import SetupBase
+from .core import SetupBase, InternalResources
 from .environment import EnvironmentSetup
 from .propagation import PropagationSetup
 from .estimation import EstimationSetup
@@ -29,6 +29,9 @@ class CaseSetup(SetupBase):
 
     @classmethod
     def from_config_file(cls, config_path: Path) -> "CaseSetup":
+
+        # Load paths to internal resources
+        internal_resources = InternalResources.from_resources_file()
 
         log.info(f"Loading configuration from {config_path}")
 
