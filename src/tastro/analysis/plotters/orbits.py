@@ -8,7 +8,7 @@ from ...cli.parsers.plotters import (
 )
 from .core import AnalysisManager
 from pathlib import Path
-from ...io import PropagationOutput, EstimationResults
+from ...io import PropagationOutput, EstimationResults, load_kernel_list
 import enum
 from tudatpy.astro import (
     time_representation as ttime,
@@ -17,7 +17,6 @@ from tudatpy.astro import (
 from ...logging import log
 import traceback
 from tudatpy.data_input.environment_data import spice
-import yaml
 
 
 class AnalysisType(enum.IntEnum):
@@ -279,8 +278,9 @@ class StateResidualVisualizationManager(
 
                 # Compose rotation matrix
                 try:
-                    for kernel in config.environment.general.spice_kernels:
-                        spice.load_kernel(str(kernel))
+                    load_kernel_list(config, source / "metak.tm")
+                    # for kernel in config.environment.general.spice_kernels:
+                    #     spice.load_kernel(str(kernel))
                     partial_matrix = np.array(
                         [
                             tframe.inertial_to_rsw_rotation_matrix(rstate_i)
