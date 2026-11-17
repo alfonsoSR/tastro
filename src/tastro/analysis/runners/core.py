@@ -51,8 +51,16 @@ def propagation_from_source_directory(source_dir: Path) -> None:
     config.perform_propagation = True
 
     try:
-        # Load contents of metakernel
-        spice.load_kernel(str(metak_path))
+
+        # Load SPICE kernels in configuration file
+        for kernel in config.environment.general.spice_kernels:
+            log.debug(f"Loading kernel: {kernel}")
+            spice.load_kernel(str(kernel))
+
+        # log.fatal(spice.get_total_count_of_kernels_loaded())
+
+        # # Load contents of metakernel
+        # spice.load_kernel(str(metak_path))
 
         # Define system of bodies and propagation settings
         system_of_bodies = system_of_bodies_from_config(config=config)
@@ -96,8 +104,12 @@ def estimation_from_source_directory(source_dir: Path) -> None:
     config.perform_estimation = True
 
     try:
-        # Load contents of metakernel
-        spice.load_kernel(str(metak_path))
+        # Load SPICE kernels in configuration file
+        for kernel in config.environment.general.spice_kernels:
+            log.debug(f"Loading kernel: {kernel}")
+            spice.load_kernel(str(kernel))
+        # # Load contents of metakernel
+        # spice.load_kernel(str(metak_path))
 
         # Define system of bodies and propagation settings
         system_of_bodies = system_of_bodies_from_config(config=config)
@@ -135,8 +147,12 @@ def prefit_analysis_from_source_directory(source_dir: Path) -> None:
     config.perform_estimation = True
 
     try:
-        # Load metakernel
-        spice.load_kernel(str(metak_path))
+        # # Load metakernel
+        # spice.load_kernel(str(metak_path))
+        # Load SPICE kernels in configuration file
+        for kernel in config.environment.general.spice_kernels:
+            log.debug(f"Loading kernel: {kernel}")
+            spice.load_kernel(str(kernel))
 
         # Ensure vehicle has ephemerides
         vehicle_name = config.environment.general.spacecraft
