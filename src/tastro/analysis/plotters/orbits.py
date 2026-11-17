@@ -8,7 +8,7 @@ from ...cli.parsers.plotters import (
 )
 from .core import AnalysisManager
 from pathlib import Path
-from ...io import PropagationOutput, EstimationResults
+from ...io import PropagationOutput, EstimationResults, load_kernel_list
 import enum
 from tudatpy.astro import (
     time_representation as ttime,
@@ -267,17 +267,29 @@ class StateResidualVisualizationManager(
 
             case ReferenceFrame.RSW:
 
+                # Load configuration for SPICE kernels
+                config = CaseSetup.from_config_file(
+                    source / "configuration.yaml"
+                )
+
                 covariance_history_j2000 = np.array(
                     list(estimation.covariance_history.values())
                 )
 
                 # Compose rotation matrix
-                partial_matrix = np.array(
-                    [
-                        tframe.inertial_to_rsw_rotation_matrix(rstate_i)
-                        for rstate_i in propagation.rstate_j2000
-                    ]
-                )
+                try:
+                    load_kernel_list(config, source / "metak.tm")
+                    # for kernel in config.environment.general.spice_kernels:
+                    #     spice.load_kernel(str(kernel))
+                    partial_matrix = np.array(
+                        [
+                            tframe.inertial_to_rsw_rotation_matrix(rstate_i)
+                            for rstate_i in propagation.rstate_j2000
+                        ]
+                    )
+                finally:
+                    spice.clear_kernels()
+
                 rotation_matrix = (
                     np.ones((partial_matrix.shape[0]))[:, None, None]
                     * np.identity(6)[None, :, :]
@@ -425,14 +437,14 @@ class StateResidualVisualizationManager(
 
         # Get formal errors per source if requested
         if self.formal_errors:
-            try:
-                spice.load_kernel(str(sources[0] / "metak.tm"))
-                formal_errors_per_source: dict[Path, FigureData] = {
-                    source: self.__formal_errors_from_source_dir(source)
-                    for source in sources
-                }
-            finally:
-                spice.clear_kernels()
+            # try:
+            #     spice.load_kernel(str(sources[0] / "metak.tm"))
+            formal_errors_per_source: dict[Path, FigureData] = {
+                source: self.__formal_errors_from_source_dir(source)
+                for source in sources
+            }
+            # finally:
+            #     spice.clear_kernels()
 
         # Generate figure
         mosaic = ("ab;" * 3) + ("cd;" * 3) + ("ef;" * 3) + "gg"
