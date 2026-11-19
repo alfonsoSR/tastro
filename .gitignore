@@ -8,7 +8,6 @@ code/residuals
 .DS_Store
 code/closed-loop/*.txt
 doc
-*.yaml
 build
 
 # Python
