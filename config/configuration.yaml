@@ -1,0 +1,608 @@
+Time:
+
+  # Beginning and end of the simulation period: ISO UTC string
+  initial_epoch: "<str>"
+  final_epoch: "<str>"
+
+Environment:
+
+  General:
+    # Global reference frame
+    global_frame_origin: <str>
+    global_frame_orientation: "<str>"
+    # Name of the spacecraft
+    spacecraft: "<str>"
+    # Center of propagation: Name of one of the bodies
+    center: "<str>"
+    # SPICE kernels
+    # Paths relative to `KERNELS` in .tastro.toml, prepended by $TASTRO_KERNELS
+    spice_kernels:
+      - $TASTRO_KERNELS/<str-1>
+      - $TASTRO_KERNELS/<str-2>
+
+  # Planets refers to all natural bodies: Sun, planets, moons, asteroids...
+  Planets:
+
+    # Name of the body (Capitalized)
+    <str>:
+
+      # Whether the body is considered in the analysis
+      present: <bool>
+
+      Ephemerides:
+        # Wether the body has ephemerides: true or false
+        present: <bool>
+        # Type of ephemerides: null, direct, interpolated
+        model: <null/str>
+        # Reference frame origin and orientation: null, global or name
+        ephemeris_frame_origin: <null/str>
+        ephemeris_frame_orientation: <null/str>
+        # Interpolation step: null or value (Used for interpolated ephemerides)
+        interpolation_step: <null/float>
+        # Interpolation buffer time: null or value
+        interpolation_buffer: <null/float>
+
+      Rotation:
+        # Wether the body has a rotation model: true or false
+        present: <bool>
+        # Type of rotation model to use: null, spice, precise
+        model: <null/str>
+        # Base frame: global or name
+        base_frame: <null/str>
+        # Target frame: null, name
+        target_frame: <null/str>
+
+      Shape:
+        # Wether the body has a shape model: true or false
+        present: <bool>
+        # Type of shape model to use: null, spherical_spice, spherical, ellipsoid
+        model: <null/str>
+        # Equatorial radius: null or value (For spherical and ellipsoid)
+        equatorial_radius: <null/float>
+        # Flattening (f in 1/f): null or value (For ellipsoid)
+        flattening_factor: <null/float>
+
+      Gravity:
+        # Wether the body has a gravity field: true or false
+        present: <bool>
+        # Type of gravity field model to use: null, spice_point_mass, spherical_harmonics
+        model: <null/str>
+        # Spherical harmonics gravity field model: null or name of file
+        spherical_harmonics_file: <null/str>
+        # Degree and order of spherical harmonics model: null or value
+        spherical_harmonics_degree: <null/str>
+        spherical_harmonics_order: <null/str>
+        # Reference frame for spherical harmonics model: null or value
+        spherical_harmonics_frame: <null/str>
+
+      Tides:
+        # Whether the gravity field changes due to tides
+        present: <bool>
+        # Tidal model: null or solid_body_tide
+        model: <null/str>
+        # Additional settings for solid_k2 model
+        solid_k2_setup:
+          # List of tide-raising bodies
+          tide_raising_bodies: <null/list[str]>
+          # k2 tidal coefficient
+          k2: <null/float>
+
+      Radiation:
+
+        # Whether the body has a radiation source interface
+        present: <bool>
+        # Radiation source model: null, direct_constant, albedo
+        model: <null/str>
+        # Direct radiation settings
+        direct_setup:
+          # Luminosity: value or null
+          luminosity: <null/float>
+
+      Atmosphere:
+
+        # Whether the planet has an atmospheric interface
+        present: <bool>
+        # Atmospheric model: null, exponential, exponential_predefined, mars_dtm
+        model: <null/str>
+        # Specific settings for exponential atmosphere
+        exponential_settings:
+          # Scale height: value or null
+          scale_height: <null/float>
+          # Surface density: value or null
+          surface_density: <null/float>
+          # Constant temperature: value or null
+          constant_temperature: <null/float>
+          # Specific gas constant: value or null
+          specific_gas_constant: <null/float>
+          # Ratio of specific heats: value or null
+          ratio_specific_heats: <null/float>
+
+  Stations:
+
+    # Station name as specified in the coordinates file
+    <str>:
+
+      # Whether the station is considered in the analysis: true/false
+      present: <bool>
+
+      Coordinates:
+        # Reference epoch for station coordinates: none or ISO UTC
+        reference_epoch: "<null/str>"
+        # Source from which to get state: null, from_glo, approximated_dsn
+        available_position: <null/str>
+        # ITRF version in which the coordinates are given: null or ITRFXXXX
+        itrf_version: <null/str>
+        # Consider linear motion: null, or true/false
+        linear_motion: <null/bool>
+        # Consider motion due to body deformation: null, true/false
+        body_deformation: <null/bool>
+
+      Uplink:
+          # Whether uplink frequencies are defined for this station
+          present: <bool>
+          # Start epochs for the ramps: ISO UTC strings
+          start:
+            - "<str>"
+          # End epochs for the ramps: ISO UTC strings
+          end:
+            - "<str>"
+          # Reference frequencies for the ramps: float as string
+          ref_freq:
+            - "<float>"
+          # Ramp rates for the ramps: float as string
+          ramp_rate:
+            - "<float>"
+
+  Vehicles:
+
+    # Spacecraft name (format unclear)
+    <str>:
+
+      # Whether the spacecraft is considered in the analysis
+      present: <bool>
+
+      Ephemerides:
+        # Wether the vehicle has ephemerides: true or false
+        present: <bool>
+        # Type of ephemerides: null, direct, interpolated
+        model: <null/str>
+        # Reference frame origin and orientation: null, global, or name
+        ephemeris_frame_origin: <null/str>
+        ephemeris_frame_orientation: <null/str>
+        # Interpolation step: null or value (Used for interpolated ephemerides)
+        interpolation_step: <null/float>
+        # Interpolation buffer time: none or value
+        interpolation_buffer: <null/float>
+
+      Rotation:
+        # Wether the vehicle has a rotation model: true or false
+        present: <bool>
+        # Type of rotation model to use: null, spice, precise
+        model: <null/str>
+        # Fixed reference frame: null, name
+        base_frame: <null/str>
+        target_frame: <null/str>
+
+      Systems:
+        # Whether the vehicle has settings for Doppler tracking
+        present: <bool>
+        # Transponder turnaround ratio: null, default
+        turnaround_ratio: <null/str>
+        # Reference point: null, origin, HGA
+        reference_point: <null/str>
+        # Vehicle mass: value or null
+        mass: <null/float>
+
+      Radiation:
+
+        # Whether the vehicle has a radiation target interface
+        present: <bool>
+        # Radiation target model: null, cannonball, paneled
+        model: <null/str>
+        # Settings for cannonball radiation model
+        cannonball_settings:
+          # Reference area
+          reference_area: <null/float>
+          # Radiation pressure coefficient
+          radiation_pressure_coefficient: <null/float>
+        # Radiation settings per element of paneled model
+        paneled_settings:
+          # A list of items with the following properties
+          -
+            panels:
+              - <str>
+            specular_reflectivity: <float>
+            diffuse_reflectivity: <float>
+            instantaneous_reradiation: <bool>
+      Shape:
+        # Whether the vehicle has shape settings
+        present: <bool>
+        # Model for vehicle shape settings: null or paneled
+        model: <null/str>
+        # Additional settings for paneled model
+        paneled_settings:
+         # A list of items with these attributes
+          - panel_id: <str> # Must be present in panel settings above
+            area: <float>
+            frame: "<str>"
+            normal_direction: [<float>, <float>, <float>]
+
+      Aerodynamics:
+
+        # Whether the vehicle has an aerodynamic interface
+        present: <bool>
+        # Model for aerodynamic interface: null or cannonball
+        model: <null/str>
+        # Specific settings for cannonball model
+        cannonball_settings:
+          # Reference area
+          reference_area: <float>
+          # Force coefficients
+          force_coefficients: [<float>, <float>, <float>]
+          # Reference frame for force coefficients: negative_aerodynamic_frame_coefficients (potentially other options)
+          coefficient_frame: <str>
+
+Propagation:
+
+  # Settings for the numerical integrator
+  integrator:
+
+    # General configuration
+    general:
+      # Starting point: start, end, middle, or custom
+      starting_point: <str>
+      # Epoch for custom starting point: ISO-T epoch or null
+      custom_start_epoch: "<null/str>"
+      # Terminate exactly on final condition: true/false
+      terminate_exactly: <bool>
+      # State representation: Option of TranslationalPropagatorType
+      state_representation: <str>
+      # Integrator type: One of the tables below
+      integrator_type: <str>
+
+    # Setup for fixed-step integrator
+    rkf_fixed:
+      # Whether to use this type of integrator: true/false
+      present: <bool>
+      # Coefficient set: Valid choice for CoefficientSets
+      coefficients: <null/str>
+      # Step size
+      step_size: <null/float>
+
+    # Setup for variable-step integrator
+    rkf_variable:
+      # Whether to use this type of integrator: true/false
+      present: <bool>
+      # Coefficient set: Valid choice for CoefficientSets
+      coefficients: <null/str>
+      # Initial step size
+      initial_step: <null/float>
+      # Element-wise relative tolerance
+      rtols: <null/list[float]>
+      # Element-wise absolute tolerance
+      atols: <null/list[float]>
+      # Safety factor
+      safety_factor: <null/float>
+      # Minimum factor increment
+      min_increment: <null/float>
+      # Maximum factor increment
+      max_increment: <null/float>
+      # Minimum step size
+      min_step: <null/float>
+      # Maximum step size
+      max_step: <null/float>
+
+  accelerations:
+
+    # Must match one of the vehicles listed above
+    <str>:
+
+      # Accelerations associated with external bodies
+      external:
+
+        # Must match one of the planets listed in the environment
+        <str>:
+
+          # Gravitational acceleration (Type inferred from gravity field model)
+          Gravitational:
+            # Whether to take the acceleration into account
+            present: <bool>
+
+          # Aerodynamic acceleration
+          Aerodynamic:
+            # Whether to take the acceleration into account
+            present: <bool>
+
+          # Radiation pressure acceleration
+          Radiation:
+            # Whether to take radiation pressure into account
+            present: <bool>
+            # Occulting bodies
+            occulting_bodies: <null/list[str]>
+
+          # Relativistic corrections
+          Relativistic:
+            # Whether to take the acceleration into account
+            present: <bool>
+            # Schwarzschild acceleration: true/false
+            use_karl: <bool>
+            # Lense Thirring acceleration: true/false
+            use_lense: <bool>
+
+      # Accelerations arising from subsystems in the vehicle
+      internal:
+
+          # Thrust acceleration
+          Thrust:
+            present: <bool>
+
+          # Acceleration due to quasi-impulsive shot
+          Impulsive:
+            present: <bool>
+
+          # Empirical acceleration
+          Empirical:
+            present: <bool>
+
+Estimation:
+
+  light_propagation:
+
+    corrections:
+
+      # Tropospheric correction
+      tropospheric:
+        # Whether to take it into account
+        present: <bool>
+        # Model: null, vmf3
+        model: <null/str>
+        # Sources
+        # Paths relative to `RESOURCES` in .tastro.toml, prepended by $TASTRO_RESOURCES
+        sources:
+          - $TASTRO_RESOURCES/<str>
+
+      # Ionospheric correction
+      ionospheric:
+        # Whether to take it into account
+        present: <bool>
+        # Model: null, ionex
+        model: <null/str>
+        # Sources
+        # Paths relative to `RESOURCES` in .tastro.toml, prepended by $TASTRO_RESOURCES
+        sources:
+          - $TASTRO_RESOURCES/<str>
+
+      # Relativistic correction
+      relativistic:
+        # Whether to take it into account
+        present: <bool>
+        # Model: null, first_order
+        model: <null/str>
+        # Bodies: null or list of strings
+        bodies: <null/list[str]>
+
+    convergence:
+
+      # Wether to iterate corrections when solving the LT equation
+      iterate_corrections: <bool>
+      # Maximum number of iterations: default 50
+      max_iterations: <int>
+      # What to do when convergence is not reached in maximum iterations
+      # Valid option of LightTimeFailureHandling
+      on_failure: <str>
+
+  observation_models:
+
+    # Differenced phase observations
+    closed_loop:
+
+      present: <bool>
+
+      link_definitions:
+
+        # Name of body, vehicle or station as listed in Environment
+        <str>:
+
+          transmitter:
+            # Body associated with the link end
+            body: <str>
+            # Reference point: origin or name of reference point
+            reference_point: <str>
+
+          retransmitter:
+            # Body associated with the link end
+            body: <str>
+            # Reference point: origin or name
+            reference_point: <str>
+
+          receiver:
+            # Body associated with the link end
+            body: <str>
+            # Reference point: origin or name
+            reference_point: <str>
+
+      ancillary:
+        # Uplink frequency band: Valid choice of FrequencyBands
+        uplink_band: <str>
+        # Downlink frequency band: Valid choice of FrequencyBands
+        downlink_band: <str>
+        # Reference frequency band: Valid choice of FrequencyBands
+        reference_band: <str>
+        # Reference frequency: Should be 0
+        reference_frequency: <float>
+        # Integration time of observations (As in input file, compression is specified in a different place)
+        integration_time: <float>
+
+    cartesian:
+
+      present: <bool>
+
+      link_definitions:
+
+        # Name of body, vehicle or station as listed in environment
+        <str>:
+
+          observer:
+            # Body associated with the link end
+            body: <str>
+            # Reference point: origin or name
+            reference_point: <str>
+
+          observed_body:
+            # Body associated with the link end
+            body: <str>
+            # Reference point: origin or name
+            reference_point: <str>
+
+    # PRIDE Doppler observations / Open-loop doppler
+    open_loop:
+
+      present: <bool>
+
+      link_definitions:
+
+        # Name of body, vehicle or station as listed in environment
+        <str>:
+
+          transmitter:
+            # Body associated with the link end
+            body: <str>
+            # Reference point: origin or name
+            reference_point: <str>
+
+          retransmitter:
+            # Body associated with the link end
+            body: <str>
+            # Reference point: origin or name
+            reference_point: <str>
+
+          receiver:
+            # Body associated with the link end
+            body: <str>
+            # Reference point: origin or name
+            # Set to __id to use the name of the link definition
+            reference_point: <str>
+
+      ancillary:
+        # Uplink frequency band: Valid choice of FrequencyBands
+        uplink_band: <str>
+        # Downlink frequency band: Valid choice of FrequencyBands
+        downlink_band: <str>
+        # Reference frequency band: Valid choice of FrequencyBands
+        reference_band: <str>
+        # Reference frequency: Should be 0
+        reference_frequency: <float>
+        # Integration time of observations
+        integration_time: <float>
+
+  observations:
+
+    closed_loop:
+
+      # Sources
+      sources:
+
+        # Data from IFMS files
+        # Paths relative to OBSERVATIONS in .tastro.toml, prepended by $TASTRO_OBSERVATIONS
+        ifms:
+          - $TASTRO_OBSERVATIONS/<str>
+
+        # Data from ODF files
+        # Paths relative to OBSERVATIONS in .tastro.toml, prepended by $TASTRO_OBSERVATIONS
+        # Station name as listed in Environment
+        odf:
+          -
+            path: $TASTRO_OBSERVATIONS/<str>
+            station: <str>
+
+      # Compression of observations
+      compression:
+        # Whether to compress observations or not
+        present: <bool>
+        # Compression ratio: ratio between desired and default cadences
+        integration_time: <float>
+
+      # Filters
+      filters:
+
+        present: <bool>
+
+        absolute_value:
+          -
+            value: <float>
+            filter_out: <bool>
+            use_opposite: <bool>
+
+        between_epochs:
+          -
+            # UTC ISO strings
+            first_epoch: "<str>"
+            second_epoch: "<str>"
+            filter_out: <bool>
+            use_opposite: <bool>
+
+        residual_based: []
+
+    open_loop:
+
+      # Source files for observations
+      # Path relative to OBSERVATIONS in .tastro.toml, prepended by $TASTRO_OBSERVATIONS
+      # Station name as specified in Environment
+      sources:
+        -
+          path: $TASTRO_OBSERVATIONS/<str>
+          station: <str>
+
+      # Observation filters
+      filters:
+        # Whether to apply filters to observations
+        present: <bool>
+        # Filters based on the absolute value of the observable
+        absolute_value:
+          # -
+          #   # Filter anything above/below this value
+          #   value: <null/float>
+          #   # Filter out means remove matching observations
+          #   filter_out: <bool>
+          #   # Use opposite means match larger than value
+          #   use_opposite: <bool>
+        # Select observations between two epochs
+        between_epochs:
+
+          - filter_out: <bool>
+            # UTC ISO strings
+            first_epoch: '<str>'
+            second_epoch: '<str>'
+            # Station name as listed in Environment
+            station: <str>
+            use_opposite: <bool>
+
+        residual_based:
+
+          # Station name as listed in Environment or all
+          - station: <str>
+            # Number of times to apply the filter
+            number_of_iterations: <int>
+            # Number of standard deviations to use as boundary
+            sigmas: <float>
+            # The amount of time over which to compute the STD
+            splitter_value: <float>
+
+    cartesian:
+
+      sources:
+        -
+          # Path relative to OBSERVATIONS in .tastro.toml, prepended by $TASTRO_OBSERVATIONS
+          path: $TASTRO_OBSERVATIONS/<str>
+          link: <str>
+          # Whether to use ephemerides or propagated trajectory
+          use_ephemerides: <bool>
+
+  parameters:
+
+    initial_states: <bool>
+    drag_coefficient: <bool>
+    arcwise_drag_coefficient: <bool>
+    radiation_pressure_coefficient: <bool>
+    k2_radiation_coefficient: <bool>
+    gm_phobos: <bool>
