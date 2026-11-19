@@ -14,8 +14,14 @@ class SimulationIntervalSetup(SetupBase):
     final_epoch: ttime.Time
 
 
+class MetadataSetup(SetupBase):
+
+    version: str
+
+
 class CaseSetup(SetupBase):
 
+    metadata: MetadataSetup
     time: SimulationIntervalSetup
     environment: EnvironmentSetup
     propagation: PropagationSetup
@@ -38,6 +44,7 @@ class CaseSetup(SetupBase):
         # Set base directory
         output.base_directory = config_path.parent
 
+        log.debug(f"Configuration file version: {output.metadata.version}")
         log.info(f"Finished loading configuration")
 
         return output

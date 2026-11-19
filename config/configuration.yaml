@@ -1,3 +1,7 @@
+Metadata:
+  # Version of the configuration file
+  version: 1.0.0
+
 Time:
 
   # Beginning and end of the simulation period: ISO UTC string
