@@ -32,6 +32,10 @@ def state_residuals(user_input: StateResidualComparisonInput) -> None:
     )
 
 
+def state_differences(user_input: StateResidualComparisonInput) -> None:
+    StateResidualComparisonManager(user_input).execute_function("state_vector")
+
+
 COMPARISON_COMMANDS: list[Command] = [
     Command(
         "doppler-prefits",
@@ -56,6 +60,12 @@ COMPARISON_COMMANDS: list[Command] = [
         StateResidualComparisonParser,
         state_residuals,
         "Difference in state residuals",
+    ),
+    Command(
+        "state-vectors",
+        StateResidualComparisonParser,
+        state_differences,
+        "Difference between trajectories from different analyses",
     ),
     Command(
         "correlation",

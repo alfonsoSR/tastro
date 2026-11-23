@@ -1103,5 +1103,115 @@ class StateResidualComparisonManager(
 
         return None
 
+    def state_vector(self, sources: list[Path]) -> None:
+        """Direct comparison of trajectories from different analyses
+
+        :param sources: List of source directories
+        """
+
+        # Define name of figure from state configurations
+        target_id = name_component_from_state_config(self.target_config)
+        reference_id = name_component_from_state_config(self.ref_config)
+        figure_name = (
+            f"state-difference-{self.reference_frame}-"
+            f"{target_id}-{reference_id}.png"
+        )
+
+        # Define settings for canvas and legend
+        canvas_setup = self.generate_default_canvas_setup(
+            source=self.get_output_directory(sources[0]),
+            figure_name=figure_name,
+            title=(
+                f"State difference :: {target_id.upper()} of target"
+                f"vs. {reference_id.upper()} of {self.ref_dir.name}"
+            ),
+            canvas_size=(6, 6.5),
+        )
+        legend_setup = ng.PlotSetup(
+            legend_columns=self.legend_cols,
+        )
+
+        # Load reference orbit
+        reference_orbit = self.__orbit_from_source_dir(
+            self.ref_dir,
+            self.ref_config[0],
+            self.ref_config[1],
+            self.reference_frame,
+        )
+
+        # Load target orbits
+        orbit_difference_per_source: dict[Path, FigureData] = {
+            source: (
+                self.__orbit_from_source_dir(
+                    source,
+                    self.target_config[0],
+                    self.target_config[1],
+                    self.reference_frame,
+                )
+                - reference_orbit
+            )
+            for source in sources
+        }
+
+        # Generate figure
+        mosaic = ("ab;" * 3) + ("cd;" * 3) + ("ef;" * 3) + "gg"
+        with ng.Mosaic(mosaic, canvas_setup) as canvas:
+
+            components = ["x", "dx", "y", "dy", "z", "dz"]
+            match self.reference_frame:
+                case ReferenceFrame.J2000:
+                    label_components = components
+                case ReferenceFrame.RSW:
+                    label_components = ["r", "dr", "s", "ds", "w", "dw"]
+                case _:
+                    raise ValueError("Frame not implemented")
+            labels = [
+                rf"\dot {component[1]}" if component[0] == "d" else component[0]
+                for component in label_components
+            ]
+            units = [
+                "mm/s" if component[0] == "d" else "m"
+                for component in components
+            ]
+            scales = [
+                1e3 if component[0] == "d" else 1 for component in components
+            ]
+
+            for idx, component in enumerate(components):
+
+                label = labels[idx]
+                unit = units[idx]
+                scale = scales[idx]
+
+                # Define setup for subfigure
+                subfig_setup = ng.PlotSetup(
+                    xlabel=f"Hours past {self.ref_epoch_isot}",
+                    ylabel=rf"${label}$ [{unit}]",
+                    scilimits=(-3, 3),
+                )
+
+                # Generate subfigure
+                with canvas.subplot(subfig_setup) as subfig:
+
+                    for source in sources:
+
+                        update_figure(
+                            subfig,
+                            orbit_difference_per_source[source],
+                            component,
+                            scale,
+                        )
+
+            # Add legend
+            with canvas.subplot(legend_setup, ng.Legend) as legend:
+
+                for source in sources:
+
+                    legend.line(
+                        -1, -1, fmt="o", label=self.get_id_for_directory(source)
+                    )
+
+        return None
+
 
 # class OrbitVisualizationManager(VisualizationManager):
