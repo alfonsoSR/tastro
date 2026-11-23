@@ -16,7 +16,8 @@ class SimulationIntervalSetup(SetupBase):
 
 class MetadataSetup(SetupBase):
 
-    version: str
+    present: bool = False
+    version: str = "0.0.0"
 
 
 class CaseSetup(SetupBase):
