@@ -17,6 +17,7 @@ from tudatpy.astro import (
 from ...logging import log
 import traceback
 from tudatpy.data_input.environment_data import spice
+from typing import Callable
 
 
 class AnalysisType(enum.IntEnum):
@@ -961,7 +962,16 @@ class StateResidualComparisonManager(
         analysis_type: AnalysisType,
         orbit_type: OrbitType,
         reference_frame: ReferenceFrame,
+        reference_orbit_j2000: np.ndarray | None = None,
     ) -> FigureData:
+        """Load orbit from output of analysis
+
+        :param source: Path to directory with analysis output
+        :param analysis_type: Whether to load a propagation or an estimation
+        :param orbit_type: Whether to load computed or reference trajectory
+        :param reference_frame: Reference frame to express the state vector
+        :param reference_orbit: Reference trajectory in J2000 frame to be used to compute the rotation matrix to the target reference frame if different from J2000. If set to None we assume that the reference ephemerides of the analysis in source are the same as those used for the reference trajectory, and we extract the state in the desired frame directly.
+        """
 
         # Load trajectory
         match analysis_type:
@@ -974,9 +984,50 @@ class StateResidualComparisonManager(
             case _:
                 raise TypeError(f"Invalid analysis type: {analysis_type}")
 
-        # Extract cartesian states and epochs
-        state = getattr(results, f"{orbit_type}_{reference_frame}")
+        # Extract epochs
         dt = (results.epochs - self.ref_epoch) / 3600.0
+
+        # If no reference orbit or J2000 frame, retrieve state directly
+        if (reference_orbit_j2000 is None) or (
+            reference_frame == ReferenceFrame.J2000
+        ):
+            state = getattr(results, f"{orbit_type}_{reference_frame}")
+        # Otherwise, retrieve J2000 state, compute rotation matrix and transform
+        else:
+
+            # Retrieve J2000 state vector
+            state_j2000 = getattr(
+                results, f"{orbit_type}_{ReferenceFrame.J2000}"
+            )
+
+            # Select correct function
+            matrix_calculator: Callable[[np.ndarray], np.ndarray] = getattr(
+                tframe, f"inertial_to_{reference_frame}_rotation_matrix"
+            )
+
+            # Compute rotation matrix to target frame
+            config = CaseSetup.from_config_file(source / "configuration.yaml")
+
+            # Compose rotation matrix
+            try:
+                load_kernel_list(config, source / "metak.tm")
+                # for kernel in config.environment.general.spice_kernels:
+                #     spice.load_kernel(str(kernel))
+
+                state = np.zeros_like(state_j2000)
+                for idx, rstate_i in enumerate(reference_orbit_j2000):
+
+                    # Calculate rotation matrix
+                    rotation_matrix = matrix_calculator(rstate_i)
+
+                    # Transform position and velocity
+                    _position = rotation_matrix @ state_j2000[idx, :3]
+                    _velocity = rotation_matrix @ state_j2000[idx, 3:]
+                    state[idx] = np.array([_position, _velocity]).flatten()
+
+                log.debug(f"{state.shape}, {state_j2000.shape}")
+            finally:
+                spice.clear_kernels()
 
         return FigureData(dt, nt.CartesianState(*state.T))
 
@@ -1088,6 +1139,127 @@ class StateResidualComparisonManager(
                         update_figure(
                             subfig,
                             residual_difference_per_source[source],
+                            component,
+                            scale,
+                        )
+
+            # Add legend
+            with canvas.subplot(legend_setup, ng.Legend) as legend:
+
+                for source in sources:
+
+                    legend.line(
+                        -1, -1, fmt="o", label=self.get_id_for_directory(source)
+                    )
+
+        return None
+
+    def state_vector(self, sources: list[Path]) -> None:
+        """Direct comparison of trajectories from different analyses
+
+        :param sources: List of source directories
+        """
+
+        # Define name of figure from state configurations
+        target_id = name_component_from_state_config(self.target_config)
+        reference_id = name_component_from_state_config(self.ref_config)
+        figure_name = (
+            f"state-difference-{self.reference_frame}-"
+            f"{target_id}-{reference_id}.png"
+        )
+
+        # Define settings for canvas and legend
+        canvas_setup = self.generate_default_canvas_setup(
+            source=self.get_output_directory(sources[0]),
+            figure_name=figure_name,
+            title=(
+                f"State difference :: {target_id.upper()} of target "
+                f"vs. {reference_id.upper()} of {self.ref_dir.name}"
+            ),
+            canvas_size=(6, 6.5),
+        )
+        legend_setup = ng.PlotSetup(
+            legend_columns=self.legend_cols,
+        )
+
+        # Load reference orbit
+        reference_orbit = self.__orbit_from_source_dir(
+            self.ref_dir,
+            self.ref_config[0],
+            self.ref_config[1],
+            self.reference_frame,
+        )
+
+        # If target orbit not J2000, load reference orbit in J2000
+        reference_orbit_j2000: np.ndarray | None = None
+        if self.reference_frame != ReferenceFrame.J2000:
+            reference_orbit_j2000 = self.__orbit_from_source_dir(
+                self.ref_dir,
+                self.ref_config[0],
+                self.ref_config[1],
+                ReferenceFrame.J2000,
+            ).state.asarray.T
+
+        # Load target orbits
+        orbit_difference_per_source: dict[Path, FigureData] = {
+            source: (
+                self.__orbit_from_source_dir(
+                    source,
+                    self.target_config[0],
+                    self.target_config[1],
+                    self.reference_frame,
+                    reference_orbit_j2000,
+                )
+                - reference_orbit
+            )
+            for source in sources
+        }
+
+        # Generate figure
+        mosaic = ("ab;" * 3) + ("cd;" * 3) + ("ef;" * 3) + "gg"
+        with ng.Mosaic(mosaic, canvas_setup) as canvas:
+
+            components = ["x", "dx", "y", "dy", "z", "dz"]
+            match self.reference_frame:
+                case ReferenceFrame.J2000:
+                    label_components = components
+                case ReferenceFrame.RSW:
+                    label_components = ["r", "dr", "s", "ds", "w", "dw"]
+                case _:
+                    raise ValueError("Frame not implemented")
+            labels = [
+                rf"\dot {component[1]}" if component[0] == "d" else component[0]
+                for component in label_components
+            ]
+            units = [
+                "mm/s" if component[0] == "d" else "m"
+                for component in components
+            ]
+            scales = [
+                1e3 if component[0] == "d" else 1 for component in components
+            ]
+
+            for idx, component in enumerate(components):
+
+                label = labels[idx]
+                unit = units[idx]
+                scale = scales[idx]
+
+                # Define setup for subfigure
+                subfig_setup = ng.PlotSetup(
+                    xlabel=f"Hours past {self.ref_epoch_isot}",
+                    ylabel=rf"${label}$ [{unit}]",
+                    scilimits=(-3, 3),
+                )
+
+                # Generate subfigure
+                with canvas.subplot(subfig_setup) as subfig:
+
+                    for source in sources:
+
+                        update_figure(
+                            subfig,
+                            orbit_difference_per_source[source],
                             component,
                             scale,
                         )
