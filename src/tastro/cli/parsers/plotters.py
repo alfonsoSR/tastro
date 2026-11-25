@@ -11,6 +11,7 @@ class PlotterInput(CommandLineInput):
     save: bool
     show: bool
     outdir: Path
+    force_outdir: bool
     name_modifier: str
     refdir: Path
     canvas_size: tuple[float, float]
@@ -42,6 +43,12 @@ class CommandLinePlotterParser[T: PlotterInput](CommandLineParser[T]):
             dest="outdir",
             default=".",
             help="Output directory",
+        )
+        self.figures_group.add_argument(
+            "--force-outdir",
+            dest="force_outdir",
+            action="store_true",
+            help="Force the program to save the plot in the directory specified through -o. Required to save plots of individual analyses in a custom directory.",
         )
         self.figures_group.add_argument(
             "--ref-dir",
@@ -130,6 +137,7 @@ class CommandLinePlotterParser[T: PlotterInput](CommandLineParser[T]):
             "legend_columns",
             "legend_location",
             "group",
+            "force_outdir",
         ]
         for argument in unprocessed_arguments:
             arguments[argument] = getattr(defaults, argument)
