@@ -27,6 +27,7 @@ class AnalysisManager[T: PlotterInput]:
         self.name_modifier = user_input.name_modifier
         self.__id_refdir = user_input.refdir
         self.outdir = user_input.outdir
+        self.force_outdir = user_input.force_outdir
 
         return None
 
@@ -64,6 +65,10 @@ class AnalysisManager[T: PlotterInput]:
         return str(directory.relative_to(self.__id_refdir))
 
     def get_output_directory(self, source: Path) -> Path:
+
+        # If user passed --force-outdir, use user-specified output directory
+        if self.force_outdir:
+            return self.outdir
 
         # If group requested and more than one source
         if (not self._single_source) and self.group:
