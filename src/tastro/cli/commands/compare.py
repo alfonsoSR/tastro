@@ -5,8 +5,11 @@ from ..parsers import (
     ResultComparisonInput,
     StateResidualComparisonParser,
     StateResidualComparisonInput,
+    ParameterComparisonParser,
+    ParameterComparisonInput,
 )
 
+from ...analysis.tables import compare_estimated_parameters
 from ...analysis.plotters.residuals import DopplerComparisonManager
 from ...analysis.plotters.orbits import StateResidualComparisonManager
 from ...analysis.plotters.statistics import MatrixComparisonManager
@@ -34,6 +37,16 @@ def state_residuals(user_input: StateResidualComparisonInput) -> None:
 
 def state_differences(user_input: StateResidualComparisonInput) -> None:
     StateResidualComparisonManager(user_input).execute_function("state_vector")
+
+
+def estimated_parameters(user_input: ParameterComparisonInput) -> None:
+    compare_estimated_parameters(
+        user_input.reference,
+        user_input.source_dirs,
+        user_input.refdir,
+        user_input.formal_errors,
+        user_input.relative_error,
+    )
 
 
 COMPARISON_COMMANDS: list[Command] = [
@@ -84,6 +97,12 @@ COMPARISON_COMMANDS: list[Command] = [
         ResultComparisonParser,
         _matrix("relative_difference_absolute_correlation"),
         "Relative difference in absolute correlation matrices",
+    ),
+    Command(
+        "estimated-parameters",
+        ParameterComparisonParser,
+        estimated_parameters,
+        "Difference in estimated parameters with respect to reference",
     ),
 ]
 

@@ -10,28 +10,45 @@ from ...cli.parsers import (
 )
 
 
+_STATE_LABELS: list[tuple[str, str]] = [
+    ("$x$", "x"),
+    ("$y$", "y"),
+    ("$z$", "z"),
+    (r"$\dot x$", "vx"),
+    (r"$\dot y$", "vy"),
+    (r"$\dot z$", "vz"),
+]
+"""Labels of the initial state as (latex, plain text) pairs"""
+
+_OPTIONAL_LABELS: list[tuple[str, list[tuple[str, str]]]] = [
+    ("drag_coefficient", [("$C_D$", "CD")]),
+    ("radiation_pressure_coefficient", [("$C_R$", "CR")]),
+    ("k2_radiation_coefficient", [("$K_2$", "K2")]),
+    ("gm_phobos", [(r"$\mu_{ph}$", "GM_phobos")]),
+    ("gm_deimos", [(r"$\mu_{de}$", "GM_deimos")]),
+    (
+        "arcwise_drag_coefficient",
+        [("$C_{D1}$", "CD1"), ("$C_{D2}$", "CD2"), ("$C_{D3}$", "CD3")],
+    ),
+]
+"""Labels of optional parameters as (latex, plain text) pairs, in estimation order"""
+
+
 def get_labels_of_estimated_parameters(
-    parameter_config: dict[str, bool],
+    parameter_config: dict[str, bool], latex: bool = True
 ) -> list[str]:
 
-    params = ["$x$", "$y$", "$z$", r"$\dot x$", r"$\dot y$", r"$\dot z$"]
-    if parameter_config["drag_coefficient"]:
-        params.append("$C_D$")
-    if parameter_config["radiation_pressure_coefficient"]:
-        params.append("$C_R$")
-    if parameter_config["k2_radiation_coefficient"]:
-        params.append("$K_2$")
-    if parameter_config["gm_phobos"]:
-        params.append(r"$\mu_{ph}$")
-    if parameter_config["gm_deimos"]:
-        params.append(r"$\mu_{de}$")
-    if parameter_config["arcwise_drag_coefficient"]:
-        params += ["$C_{D1}$", "$C_{D2}$", "$C_{D3}$"]
+    pairs = list(_STATE_LABELS)
+    for key, labels in _OPTIONAL_LABELS:
+        if parameter_config[key]:
+            pairs += labels
 
-    return params
+    return [pair[0] if latex else pair[1] for pair in pairs]
 
 
-def get_parameter_labels_from_source(source: Path) -> list[str]:
+def get_parameter_labels_from_source(
+    source: Path, latex: bool = True
+) -> list[str]:
 
     # Load parameter configuration
     with (source / "configuration.yaml").open("rb") as buffer:
@@ -45,7 +62,7 @@ def get_parameter_labels_from_source(source: Path) -> list[str]:
             __param_config[parameter] = False
 
     # Get list of parameters without biases
-    params = get_labels_of_estimated_parameters(__param_config)
+    params = get_labels_of_estimated_parameters(__param_config, latex)
 
     # Handle biases
     if not __param_config["open_loop_biases"]:
@@ -55,7 +72,7 @@ def get_parameter_labels_from_source(source: Path) -> list[str]:
     estimation = EstimationResults.from_file(source / "estimation.pkl")
     biases = len(estimation.final_parameters) - len(params)
     for idx in range(biases):
-        params.append(rf"$b_{idx}$")
+        params.append(rf"$b_{idx}$" if latex else f"b{idx}")
 
     return params
 
