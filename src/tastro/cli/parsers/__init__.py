@@ -12,8 +12,18 @@ from .plotters import (
     StateResidualComparisonInput,
     StateResidualComparisonParser,
 )
+from .tables import (
+    ParameterTableInput,
+    ParameterTableParser,
+    ParameterComparisonInput,
+    ParameterComparisonParser,
+)
 
 __all__ = [
+    "ParameterTableInput",
+    "ParameterTableParser",
+    "ParameterComparisonInput",
+    "ParameterComparisonParser",
     "CommandLineInput",
     "CommandLineInputRunner",
     "CLParser",

@@ -3,6 +3,7 @@ from importlib_metadata import version
 from .commands.compare import COMPARISON_COMMANDS
 from .commands.plot import PLOT_COMMANDS
 from .commands.run import RUN_COMMANDS
+from .commands.show import SHOW_COMMANDS
 from .commands.core import register_group
 from ..config import InternalResources
 
@@ -45,6 +46,14 @@ def main() -> None:
         "plot",
         "Visualize results of analyses",
         PLOT_COMMANDS,
+    )
+
+    # Register functions for displaying results in the terminal
+    register_group(
+        subparsers,
+        "show",
+        "Display results of analyses in the terminal",
+        SHOW_COMMANDS,
     )
 
     # Register functions for comparison
