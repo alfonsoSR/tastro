@@ -962,7 +962,7 @@ class StateResidualComparisonManager(
         analysis_type: AnalysisType,
         orbit_type: OrbitType,
         reference_frame: ReferenceFrame,
-        reference_orbit_j2000: np.ndarray | None = None,
+        reference_ephemerides_j2000: np.ndarray | None = None,
     ) -> FigureData:
         """Load orbit from output of analysis
 
@@ -970,7 +970,7 @@ class StateResidualComparisonManager(
         :param analysis_type: Whether to load a propagation or an estimation
         :param orbit_type: Whether to load computed or reference trajectory
         :param reference_frame: Reference frame to express the state vector
-        :param reference_orbit: Reference trajectory in J2000 frame to be used to compute the rotation matrix to the target reference frame if different from J2000. If set to None we assume that the reference ephemerides of the analysis in source are the same as those used for the reference trajectory, and we extract the state in the desired frame directly.
+        :param reference_ephemerides_j2000: Reference trajectory in J2000 frame to be used to compute the rotation matrix to the target reference frame if different from J2000. If set to None we assume that the reference ephemerides of the analysis in source are the same as those used for the reference trajectory, and we extract the state in the desired frame directly.
         """
 
         # Load trajectory
@@ -988,7 +988,7 @@ class StateResidualComparisonManager(
         dt = (results.epochs - self.ref_epoch) / 3600.0
 
         # If no reference orbit or J2000 frame, retrieve state directly
-        if (reference_orbit_j2000 is None) or (
+        if (reference_ephemerides_j2000 is None) or (
             reference_frame == ReferenceFrame.J2000
         ):
             state = getattr(results, f"{orbit_type}_{reference_frame}")
@@ -1015,7 +1015,7 @@ class StateResidualComparisonManager(
                 #     spice.load_kernel(str(kernel))
 
                 state = np.zeros_like(state_j2000)
-                for idx, rstate_i in enumerate(reference_orbit_j2000):
+                for idx, rstate_i in enumerate(reference_ephemerides_j2000):
 
                     # Calculate rotation matrix
                     rotation_matrix = matrix_calculator(rstate_i)
@@ -1157,6 +1157,8 @@ class StateResidualComparisonManager(
     def state_vector(self, sources: list[Path]) -> None:
         """Direct comparison of trajectories from different analyses
 
+        Plots the difference between the target and reference state vectors. The states are expressed either in J2000 frame or in the RSW/TNW frame of the reference ephemerides of the reference solution.
+
         :param sources: List of source directories
         """
 
@@ -1191,13 +1193,14 @@ class StateResidualComparisonManager(
         )
 
         # If target orbit not J2000, load reference orbit in J2000
-        reference_orbit_j2000: np.ndarray | None = None
+        reference_ephemerides_j2000: np.ndarray | None = None
         if self.reference_frame != ReferenceFrame.J2000:
-            reference_orbit_j2000 = self.__orbit_from_source_dir(
-                self.ref_dir,
-                self.ref_config[0],
-                self.ref_config[1],
-                ReferenceFrame.J2000,
+            reference_ephemerides_j2000 = self.__orbit_from_source_dir(
+                source=self.ref_dir,
+                analysis_type=self.ref_config[0],
+                orbit_type=OrbitType.EPHEMERIDES,
+                reference_frame=ReferenceFrame.J2000,
+                reference_ephemerides_j2000=None,
             ).state.asarray.T
 
         # Load target orbits
@@ -1208,7 +1211,7 @@ class StateResidualComparisonManager(
                     self.target_config[0],
                     self.target_config[1],
                     self.reference_frame,
-                    reference_orbit_j2000,
+                    reference_ephemerides_j2000,
                 )
                 - reference_orbit
             )
