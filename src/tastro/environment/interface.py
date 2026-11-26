@@ -345,6 +345,12 @@ class EnvironmentGenerator:
                     generator.radiation_source_settings()
                 )
 
+            # Climate settings
+            if planet_setup.climate.present:
+                planet_settings.climate_model_settings = (
+                    generator.climate_settings()
+                )
+
             # Atmosphere settings
             if planet_setup.atmosphere.present:
                 planet_settings.atmosphere_settings = (

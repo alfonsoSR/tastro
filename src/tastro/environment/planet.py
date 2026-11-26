@@ -353,6 +353,38 @@ class PlanetSettings(SettingsGenerator[PlanetSetup]):
                     f"Invalid radiation source model: {self.local.radiation.model}"
                 )
 
+    def climate_settings(self) -> tatmos.ClimateModelSettings:
+
+        match self.local.climate.model:
+
+            case "mars_climate_database":
+
+                log.debug("Using Mars Climate Database climate model")
+
+                # Only valid for Mars
+                if self.name != "Mars":
+                    raise ValueError(
+                        f"Tried to set up Mars Climate Database climate model for {self.name}"
+                    )
+
+                __mcd_settings = (
+                    self.local.climate.mars_climate_database_settings
+                )
+                return tatmos.mars_climate_database_climate_model(
+                    mcd_data_path="",  # Changing path to MCD data not supported
+                    dust_scenario=__mcd_settings.dust_scenario,
+                    perturbation_key=__mcd_settings.perturbation_key,
+                    perturbation_seed=__mcd_settings.perturbation_seed,
+                    gravity_wave_length=__mcd_settings.gravity_wave_length,
+                    high_resolution_mode=__mcd_settings.high_resolution_mode,
+                    max_cache_size=__mcd_settings.max_cache_size,
+                )
+
+            case _:
+                raise NotImplementedError(
+                    f"Invalid climate model: {self.local.climate.model}"
+                )
+
     def atmosphere_settings(self) -> tatmos.AtmosphereSettings:
 
         match self.local.atmosphere.model:
@@ -438,8 +470,22 @@ class PlanetSettings(SettingsGenerator[PlanetSetup]):
 
                 return tatmos.mars_dtm()
 
+            case "mars_climate_database":
+
+                log.debug("Mars Climate Database atmospheric model")
+
+                # Only valid for Mars
+                if self.name != "Mars":
+                    raise ValueError(
+                        f"Tried to set up Mars Climate Database atmospheric model for {self.name}"
+                    )
+
+                return tatmos.mars_climate_database_atmosphere_model()
+
             case _:
-                raise NotImplementedError(f"Invalid atmosphere model:")
+                raise NotImplementedError(
+                    f"Invalid atmosphere model: {self.local.atmosphere.model}"
+                )
 
     def gravity_field_variation_settings(
         self,
