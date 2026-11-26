@@ -13,6 +13,7 @@ class PlanetSetup(SetupBase):
     shape: planets.PlanetShapeSetup
     gravity: planets.PlanetGravitySetup
     radiation: planets.PlanetRadiationSourceSetup
+    climate: planets.PlanetClimateSetup
     atmosphere: planets.PlanetAtmosphereSetup
     tides: planets.SolidTideSetup
 
