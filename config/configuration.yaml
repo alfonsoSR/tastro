@@ -1,6 +1,6 @@
 Metadata:
   # Version of the configuration file
-  version: 1.0.0
+  version: 1.1.0
 
 Time:
 
@@ -102,11 +102,36 @@ Environment:
           # Luminosity: value or null
           luminosity: <null/float>
 
+      Climate:
+
+        # Whether the planet has a climate model interface
+        present: <bool>
+        # Climate model: null, mars_climate_database
+        model: <null/str>
+        # Specific settings for the mars_climate_database model
+        mars_climate_database_settings:
+          # Path to MCD data files (TO BE ADDED IN THE FUTURE)
+          # Dust scenario: null, 1, 2, 3, 4, 5, 6, 7, 8 or int from 24 through 35
+          dust_scenario: <null/int>
+          # Type of atmospheric perturbation: null, 0, 1, 2, 3, 4, 5
+          perturbation_key: <null/int>
+          # Random seed or scaling factor for atmospheric perturbations
+          # When perturbation_key is 1, 2, 3 or 4, this is the seed of a random number generator
+          # When perturbation_key is 5, this is the multiplier for stds and must be in [-4, 4]
+          perturbation_seed: <null/float>
+          # Vertical wavelength of gravity wave perturbations in meters
+          gravity_wave_length: <null/float>
+          # Whether the enable high-resolution topography from MOLA data: null, 0 or 1
+          high_resolution_mode: <null/int>
+          # Maximum number of distinct MCD query results retained by the climate model cache
+          # Possible values are null or a positive integer. Tudatpy default is 1000
+          max_cache_size: <null/int>
+
       Atmosphere:
 
         # Whether the planet has an atmospheric interface
         present: <bool>
-        # Atmospheric model: null, exponential, exponential_predefined, mars_dtm
+        # Atmospheric model: null, exponential, exponential_predefined, mars_dtm, mars_climate_database
         model: <null/str>
         # Specific settings for exponential atmosphere
         exponential_settings:
