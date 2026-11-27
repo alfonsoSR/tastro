@@ -9,6 +9,7 @@ class MarsClimateDatabaseClimateSettings(SetupBase):
     gravity_wave_length: float
     high_resolution_mode: int
     max_cache_size: int
+    present: bool = False
 
 
 class PlanetClimateSetup(SetupBase):
